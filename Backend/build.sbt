@@ -10,10 +10,16 @@ libraryDependencies += "net.logstash.logback" % "logstash-logback-encoder" % "5.
 
 libraryDependencies += "com.netaporter" %% "scala-uri" % "0.4.16"
 libraryDependencies += "net.codingwell" %% "scala-guice" % "4.2.1"
+libraryDependencies += "com.typesafe.play" %% "play-iteratees" % "2.6.1"
 
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "4.0.1" % Test
 libraryDependencies += "io.gatling.highcharts" % "gatling-charts-highcharts" % "3.0.1.1" % Test
 libraryDependencies += "io.gatling" % "gatling-test-framework" % "3.0.1.1" % Test
+libraryDependencies ++= Seq(
+  ws
+)
+libraryDependencies += ehcache
+libraryDependencies += jdbc
 
 // The Play project itself
 lazy val root = (project in file("."))

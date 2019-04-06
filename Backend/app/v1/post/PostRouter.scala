@@ -21,9 +21,10 @@ class PostRouter @Inject()(controller: MyController) extends SimpleRouter {
   override def routes: Routes = {
     case GET(p"/") =>
       controller.index
-    case GET(p"/hello") =>
+    case GET(p"/sayHello") =>
       controller.sayHello
-
+    case GET(p"/test") =>
+      controller.test
 
   }
 
