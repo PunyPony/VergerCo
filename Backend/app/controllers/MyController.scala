@@ -41,7 +41,6 @@ class MyController @Inject()(implicit ec: ExecutionContext, ws: WSClient, val co
         response.headers.get("Content-Type").map(_.head)
       )
       Result(ResponseHeader(response.status, headers), entity)
-
   }
 
   def index: Action[AnyContent] = Action.async { implicit request =>
@@ -49,14 +48,26 @@ class MyController @Inject()(implicit ec: ExecutionContext, ws: WSClient, val co
     r
   }
 
-  def test = Action.async {
+  def getInfo(url : String) = Action.async {
       implicit request => {
-        val url = "http://localhost:8080/v1/posts/state"
         val requestObj: WSRequest = ws.url(url)
         val futureResponse: Future[WSResponse] = requestObj.get()
         val r : Future[Result] = futureResponse.flatMap(responseObj => Future{responseToResult(responseObj)})
         r
       }
+  }
+
+  def getWeather() = {
+    getInfo("http://localhost:9001/v1/posts/weather")
+  }
+
+  def getState() = {
+    getInfo("http://localhost:9001/v1/posts/state")
+  }
+
+
+  def getQualityFruit() = {
+    getInfo("http://localhost:9001/v1/posts/qualityFruit")
   }
 
   def sayHello = Action { request =>

@@ -23,8 +23,8 @@ class PostRouter @Inject()(controller: MyController) extends SimpleRouter {
       controller.index
     case GET(p"/sayHello") =>
       controller.sayHello
-    case GET(p"/test") =>
-      controller.test
+//    case GET(p"/test") =>
+//      controller.test
 
   }
 

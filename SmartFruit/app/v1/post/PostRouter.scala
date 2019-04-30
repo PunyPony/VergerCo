@@ -12,11 +12,11 @@ import play.api.routing.sird._
 class PostRouter @Inject()(controller: MyController) extends SimpleRouter {
   val prefix = "/v1/posts"
 
-  def link(id: PostId): String = {
-    import com.netaporter.uri.dsl._
-    val url = prefix / id.toString
-    url.toString()
-  }
+//  def link(id: PostId): String = {
+//    import com.netaporter.uri.dsl._
+//    val url = prefix / id.toString
+//    url.toString()
+//  }
 
   override def routes: Routes = {
     case GET(p"/") =>
@@ -25,6 +25,8 @@ class PostRouter @Inject()(controller: MyController) extends SimpleRouter {
       controller.getstate
     case GET(p"/weather") =>
       controller.getweather
+    case GET(p"/fruitQuality") =>
+      controller.getfruitQuality
 //
 //    case POST(p"/") =>
 //      controller.process
