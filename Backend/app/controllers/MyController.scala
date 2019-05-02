@@ -84,15 +84,27 @@ class MyController @Inject()(implicit ec: ExecutionContext, ws: WSClient, val co
   }
 
   def processQualityFruit = Action { request =>
-    println("QUALITYFRUIT")
+    request.body.asJson.map { json =>
+      Ok(json)
+    }.getOrElse {
+      BadRequest("Expecting Json data")
+    }
   }
 
   def processState = Action { request =>
-    println("STATE")
+    request.body.asJson.map { json =>
+      Ok(json)
+    }.getOrElse {
+      BadRequest("Expecting Json data")
+    }
   }
 
   def processWeather = Action { request =>
-    println("WEATHER")
+    request.body.asJson.map { json =>
+      Ok(json)
+    }.getOrElse {
+      BadRequest("Expecting Json data")
+    }
   }
 
 }
