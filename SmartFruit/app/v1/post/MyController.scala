@@ -76,12 +76,12 @@ class MyController  @Inject()(implicit ec: ExecutionContext, ws: WSClient, val c
   }
 
   def pushState() = {
-    val jsonSensor = Json.toJson(CSVReader.getWeather("csvjson/state.csv"))
+    val jsonSensor = Json.toJson(CSVReader.getState("csvjson/state.csv"))
     pushInfo("http://localhost:9000/v1/posts/processState", jsonSensor)
   }
 
   def pushQualityFruit() = {
-    val jsonSensor = Json.toJson(CSVReader.getWeather("csvjson/quality.csv"))
+    val jsonSensor = Json.toJson(CSVReader.getFruit("csvjson/quality.csv"))
     pushInfo("http://localhost:9000/v1/posts/processQuality", jsonSensor)
   }
 
