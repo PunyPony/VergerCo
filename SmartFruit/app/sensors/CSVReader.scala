@@ -1,19 +1,26 @@
 package sensors
+
 import java.io.File
 import scala.io.Source
 
 case class State(charge: Int, temperature: Int, place: Place)
-case class Location(lat: Double, long: Double)
-case class Place(name: String, location: Location)
-case class Weather(sunshine : Boolean, temperature : Int , humidity : Int, wind : Int)
-case class Quality(mature : Boolean, sickness : Boolean)
 
-class CSVReader
-{
-  def BoolFromString(value : String) = {
+case class Location(lat: Double, long: Double)
+
+case class Place(name: String, location: Location)
+
+case class Weather(sunshine: Boolean, temperature: Int, humidity: Int, wind: Int)
+
+case class Quality(mature: Boolean, sickness: Boolean)
+
+class CSVReader {
+}
+
+object CSVReader {
+
+  def BoolFromString(value: String) = {
     value.toInt == 1
   }
-
 
   def fileisgood(file: File) = {
     if (!file.exists || file.isDirectory)

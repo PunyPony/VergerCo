@@ -65,12 +65,11 @@ class MyController @Inject()(implicit ec: ExecutionContext, ws: WSClient, val co
     getInfo("http://localhost:9001/v1/posts/state")
   }
 
-
   def getQualityFruit() = {
     getInfo("http://localhost:9001/v1/posts/qualityFruit")
   }
 
-  def sayHello = Action { request =>
+  def processJson = Action { request =>
     request.body.asJson.map { json =>
       (json \ "name").asOpt[String].map { name =>
         Ok("Hello " + name)
