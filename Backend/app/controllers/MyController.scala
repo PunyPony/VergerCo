@@ -16,6 +16,7 @@ import play.api.libs.functional.syntax._
 import play.api.libs.iteratee.Enumerator
 
 import play.api.libs.ws._
+//implicit val ec = ExecutionContext.global
 import scala.concurrent.Future
 
 import javax.inject.Inject
@@ -29,18 +30,17 @@ import akka.stream.ActorMaterializer
 import akka.stream.scaladsl._
 import akka.util.ByteString
 
-//implicit val ec = ExecutionContext.global
 
 class MyController @Inject()(implicit ec: ExecutionContext, ws: WSClient, val controllerComponents: ControllerComponents) extends BaseController {
 
   def responseToResult(response: WSResponse): Result = {
 
-      val headers = response.headers map { h => (h._1, h._2.head) }
-      val entity = HttpEntity.Strict(
-        ByteString(response.body.getBytes),
-        response.headers.get("Content-Type").map(_.head)
-      )
-      Result(ResponseHeader(response.status, headers), entity)
+    val headers = response.headers map { h => (h._1, h._2.head) }
+    val entity = HttpEntity.Strict(
+      ByteString(response.body.getBytes),
+      response.headers.get("Content-Type").map(_.head)
+    )
+    Result(ResponseHeader(response.status, headers), entity)
   }
 
   def index: Action[AnyContent] = Action.async { implicit request =>
@@ -48,13 +48,15 @@ class MyController @Inject()(implicit ec: ExecutionContext, ws: WSClient, val co
     r
   }
 
-  def getInfo(url : String) = Action.async {
-      implicit request => {
-        val requestObj: WSRequest = ws.url(url)
-        val futureResponse: Future[WSResponse] = requestObj.get()
-        val r : Future[Result] = futureResponse.flatMap(responseObj => Future{responseToResult(responseObj)})
-        r
-      }
+  def getInfo(url: String) = Action.async {
+    implicit request => {
+      val requestObj: WSRequest = ws.url(url)
+      val futureResponse: Future[WSResponse] = requestObj.get()
+      val r: Future[Result] = futureResponse.flatMap(responseObj => Future {
+        responseToResult(responseObj)
+      })
+      r
+    }
   }
 
   def getWeather() = {
@@ -79,6 +81,18 @@ class MyController @Inject()(implicit ec: ExecutionContext, ws: WSClient, val co
     }.getOrElse {
       BadRequest("Expecting Json data")
     }
+  }
+
+  def processQualityFruit = Action { request =>
+    println("QUALITYFRUIT")
+  }
+
+  def processState = Action { request =>
+    println("STATE")
+  }
+
+  def processWeather = Action { request =>
+    println("WEATHER")
   }
 
 }

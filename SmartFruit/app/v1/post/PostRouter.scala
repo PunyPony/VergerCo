@@ -19,15 +19,19 @@ class PostRouter @Inject()(controller: MyController) extends SimpleRouter {
 //  }
 
   override def routes: Routes = {
-    case GET(p"/") =>
-      controller.index
     case GET(p"/state") =>
       controller.getState
     case GET(p"/weather") =>
       controller.getWeather
     case GET(p"/fruitQuality") =>
       controller.getFruitQuality
-//
+    case GET(p"/pushWeather") =>
+      controller.pushWeather
+    case GET(p"/pushState") =>
+      controller.pushState
+    case GET(p"/pushQuality") =>
+      controller.pushQualityFruit
+    //
 //    case POST(p"/") =>
 //      controller.process
 //

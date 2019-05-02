@@ -8,6 +8,7 @@ import play.api.Logger
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc._
+import play.api.libs.ws._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent._
@@ -16,8 +17,12 @@ import play.api.mvc._
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import sensors._
+import play.api.libs.json._
+import play.api.http.HttpEntity
+import akka.util.ByteString
 
-class MyController @Inject()(val controllerComponents: ControllerComponents) extends BaseController {
+
+class MyController  @Inject()(implicit ec: ExecutionContext, ws: WSClient, val controllerComponents: ControllerComponents) extends BaseController  {
 
   implicit val locationWrites: Writes[Location] = (
     (JsPath \ "lat").write[Double] and
@@ -45,24 +50,39 @@ class MyController @Inject()(val controllerComponents: ControllerComponents) ext
       (JsPath \ "sickness").write[Boolean]
     ) (unlift(Quality.unapply))
 
-  def pushInfo(url: String, sensor: String) = Action.async {
+  def responseToResult(response: WSResponse): Result = {
+    val headers = response.headers map { h => (h._1, h._2.head) }
+    val entity = HttpEntity.Strict(
+      ByteString(response.body.getBytes),
+      response.headers.get("Content-Type").map(_.head)
+    )
+    Result(ResponseHeader(response.status, headers), entity)
+  }
+
+  def pushInfo(url: String, sensor: JsValue) = Action.async {
     implicit request => {
-      val r: Future[Result] = Future.successful(Ok("hello world"))
+      val futureResponse: Future[WSResponse] = ws.url(url).post(sensor)
+      val r: Future[Result] = futureResponse.flatMap(responseObj => Future {
+        responseToResult(responseObj)
+      })
       r
-      /*
-      val url = "http://localhost:9000/v1/posts/log"
-      val csvreader = new CSVReader()
-      val AsJson = Json.toJson(csvreader.getWeather(sensor))
-      val post = new HttpPost(url)
-      val nameValuePairs = new ArrayList[NameValuePair]()
-      nameValuePairs.add(new BasicNameValuePair("JSON", AsJson))
-      post.setEntity(new UrlEncodedFormEntity(nameValuePairs))*/
     }
   }
 
-  def index: Action[AnyContent] = Action.async { implicit request =>
-    val r: Future[Result] = Future.successful(Ok("hello world"))
-    r
+  def pushWeather() =
+  {
+    val jsonSensor = Json.toJson(CSVReader.getWeather("csvjson/weather.csv"))
+    pushInfo("http://localhost:9000/v1/posts/processWeather", jsonSensor)
+  }
+
+  def pushState() = {
+    val jsonSensor = Json.toJson(CSVReader.getWeather("csvjson/state.csv"))
+    pushInfo("http://localhost:9000/v1/posts/processState", jsonSensor)
+  }
+
+  def pushQualityFruit() = {
+    val jsonSensor = Json.toJson(CSVReader.getWeather("csvjson/quality.csv"))
+    pushInfo("http://localhost:9000/v1/posts/processQuality", jsonSensor)
   }
 
   def getSensor(sensor: JsValue): Action[AnyContent] = Action.async {
