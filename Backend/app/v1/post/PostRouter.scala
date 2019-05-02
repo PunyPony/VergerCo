@@ -27,7 +27,7 @@ class PostRouter @Inject()(controller: MyController) extends SimpleRouter {
       controller.processWeather
     case POST(p"/processState") =>
       controller.processState
-    case POST(p"/processQualityFruit") =>
+    case POST(p"/processQuality") =>
       controller.processQualityFruit
   }
 
