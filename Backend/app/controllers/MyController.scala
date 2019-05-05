@@ -50,6 +50,7 @@ class MyController @Inject()(implicit ec: ExecutionContext, ws: WSClient, val co
 
   def getInfo(url: String) = Action.async {
     implicit request => {
+
       val requestObj: WSRequest = ws.url(url)
       val futureResponse: Future[WSResponse] = requestObj.get()
       val r: Future[Result] = futureResponse.flatMap(responseObj => Future {
@@ -67,7 +68,7 @@ class MyController @Inject()(implicit ec: ExecutionContext, ws: WSClient, val co
     getInfo("http://localhost:9001/v1/posts/state")
   }
 
-  def getQualityFruit() = {
+  def getFruitQuality() = {
     getInfo("http://localhost:9001/v1/posts/qualityFruit")
   }
 
@@ -83,25 +84,53 @@ class MyController @Inject()(implicit ec: ExecutionContext, ws: WSClient, val co
     }
   }
 
-  def processQualityFruit = Action { request =>
-    request.body.asJson.map { json =>
-      Ok(json)
-    }.getOrElse {
-      BadRequest("Expecting Json data")
-    }
-  }
-
   def processState = Action { request =>
-    request.body.asJson.map { json =>
-      Ok(json)
-    }.getOrElse {
+    request.body.asJson.map { jsonObj =>
+        val json = jsonObj(0)
+        println(json)
+        val chargeperc = (json \ "chargeperc").asOpt[Int].get
+        val temperature = (json \ "temperature").asOpt[Int].get
+        val placename = (json \ "place" \"name").asOpt[String].get
+        val lat = (json \ "place" \"location" \ "lat").asOpt[Float].get
+        val long = (json \"place" \ "location" \ "long").asOpt[Float].get
+
+        println(chargeperc)
+        println(temperature)
+        println(lat)
+        println(long)
+        println(placename)
+        Ok("Saved with sucess")
+      }.getOrElse {
       BadRequest("Expecting Json data")
     }
   }
 
   def processWeather = Action { request =>
-    request.body.asJson.map { json =>
-      Ok(json)
+    request.body.asJson.map { jsonObj =>
+      val json = jsonObj(0)
+      val sunshine = (json \ "sunshine" ).asOpt[Boolean].get
+      val temperature = (json \ "temperature").asOpt[Int].get
+      val humidity = (json \ "humidity").asOpt[Int].get
+      val wind = (json \ "wind" ).asOpt[Int].get
+
+      println(sunshine)
+      println(temperature)
+      println(humidity)
+      println(wind)
+      Ok("Saved with sucess")
+    }.getOrElse {
+      BadRequest("Expecting Json data")
+    }
+  }
+
+  def processFruitQuality = Action { request =>
+    request.body.asJson.map { jsonObj =>
+      val json = jsonObj(0)
+      val mature = (json \ "mature").asOpt[Boolean].get
+      val sickness = (json \ "sickness").asOpt[Boolean].get
+      println(mature)
+      println(sickness)
+      Ok("Saved with sucess")
     }.getOrElse {
       BadRequest("Expecting Json data")
     }

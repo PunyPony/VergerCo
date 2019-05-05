@@ -1,8 +1,6 @@
 package v1.post
 
 import java.io.File
-
-import javax.inject.Inject
 import javax.inject.Inject
 import play.api.Logger
 import play.api.data.Form
@@ -32,12 +30,12 @@ class MyController  @Inject()(implicit ec: ExecutionContext, ws: WSClient, val c
     (JsPath \ "name").write[String] and
       (JsPath \ "location").write[Location]
     ) (unlift(Place.unapply))
-
   implicit val StateWrites: Writes[State] = (
     (JsPath \ "chargeperc").write[Int] and
       (JsPath \ "temperature").write[Int] and
       (JsPath \ "place").write[Place]
     ) (unlift(State.unapply))
+
   implicit val weatherWrites: Writes[Weather] = (
     (JsPath \ "sunshine").write[Boolean] and
       (JsPath \ "temperature").write[Int] and
@@ -61,6 +59,8 @@ class MyController  @Inject()(implicit ec: ExecutionContext, ws: WSClient, val c
 
   def pushInfo(url: String, sensor: JsValue) = Action.async {
     implicit request => {
+      println("PUSH INFO")
+      println(request)
       val futureResponse: Future[WSResponse] = ws.url(url).post(sensor)
       val r: Future[Result] = futureResponse.flatMap(responseObj => Future {
         responseToResult(responseObj)
@@ -80,7 +80,8 @@ class MyController  @Inject()(implicit ec: ExecutionContext, ws: WSClient, val c
     pushInfo("http://localhost:9000/v1/posts/processState", jsonSensor)
   }
 
-  def pushQualityFruit() = {
+  def pushFruitQuality() = {
+    println("PUSH Q")
     val jsonSensor = Json.toJson(CSVReader.getFruit("csvjson/quality.csv"))
     pushInfo("http://localhost:9000/v1/posts/processQuality", jsonSensor)
   }
@@ -106,5 +107,6 @@ class MyController  @Inject()(implicit ec: ExecutionContext, ws: WSClient, val c
     val jsonSensor = Json.toJson(CSVReader.getFruit("csvjson/quality.csv"))
       getSensor (jsonSensor)
   }
-
 }
+
+//object MyController {}
