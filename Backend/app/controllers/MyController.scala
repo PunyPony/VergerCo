@@ -69,7 +69,7 @@ class MyController @Inject()(implicit ec: ExecutionContext, ws: WSClient, val co
   }
 
   def getFruitQuality() = {
-    getInfo("http://localhost:9001/v1/posts/qualityFruit")
+    getInfo("http://localhost:9001/v1/posts/quality")
   }
 
   def processJson = Action { request =>
