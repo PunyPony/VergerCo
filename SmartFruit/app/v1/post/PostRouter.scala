@@ -23,7 +23,7 @@ class PostRouter @Inject()(controller: MyController) extends SimpleRouter {
       controller.getState
     case GET(p"/weather") =>
       controller.getWeather
-    case GET(p"/Quality") =>
+    case GET(p"/quality") =>
       controller.getFruitQuality
     case GET(p"/pushWeather") =>
       controller.pushWeather
