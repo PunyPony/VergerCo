@@ -11,6 +11,7 @@ import anorm._
 
 
 case class Weather(id: Option[Long] = None,
+                   objectID: Option[Int],
                     sunshine: Option[Boolean],
                     temperature: Option[Float],
                     humidity: Option[Float],
@@ -26,99 +27,40 @@ class WeatherRepository @Inject()(dbapi: DBApi)(implicit ec: DatabaseExecutionCo
 
   private val db = dbapi.database("default")
 
-//  // -- Queries
-//
 //  /**
-//    * Retrieve a computer from the id.
+//    * Retrieve a weather from the id.
 //    */
-//  def findById(id: Long): Future[Option[Computer]] = Future {
+//  def findById(id: Long): Future[Option[Weather]] = Future {
 //    db.withConnection { implicit connection =>
-//      SQL"select * from computer where id = $id".as(simple.singleOpt)
-//    }
-//  }(ec)
-//
-//  /**
-//    * Return a page of (Computer,Company).
-//    *
-//    * @param page Page to display
-//    * @param pageSize Number of computers per page
-//    * @param orderBy Computer property used for sorting
-//    * @param filter Filter applied on the name column
-//    */
-//  def list(page: Int = 0, pageSize: Int = 10, orderBy: Int = 1, filter: String = "%"): Future[Page[(Computer, Option[Company])]] = Future {
-//
-//    val offset = pageSize * page
-//
-//    db.withConnection { implicit connection =>
-//
-//      val computers = SQL"""
-//        select * from computer
-//        left join company on computer.company_id = company.id
-//        where computer.name like ${filter}
-//        order by ${orderBy} nulls last
-//        limit ${pageSize} offset ${offset}
-//      """.as(withCompany.*)
-//
-//      val totalRows = SQL"""
-//        select count(*) from computer
-//        left join company on computer.company_id = company.id
-//        where computer.name like ${filter}
-//      """.as(scalar[Long].single)
-//
-//      Page(computers, page, offset, totalRows)
-//    }
-//  }(ec)
-
-//  /**
-//    * Update a computer.
-//    *
-//    * @param id The computer id
-//    * @param computer The computer values.
-//    */
-//  def update(id: Long, computer: Computer) = Future {
-//    db.withConnection { implicit connection =>
-//      SQL("""
-//        update computer set name = {name}, introduced = {introduced},
-//          discontinued = {discontinued}, company_id = {companyId}
-//        where id = {id}
-//      """).bind(computer.copy(id = Some(id)/* ensure */)).executeUpdate()
-//      // case class binding using ToParameterList,
-//      // note using SQL(..) but not SQL.. interpolation
+//      SQL"select * from WEATHER where id = $id".as(simple.singleOpt)
 //    }
 //  }(ec)
 
   /**
-    * Insert a new computer.
+    * Insert a new weather.
     *
-    * @param computer The computer values.
+    * @param weather The weather values.
     */
   def insert(weather: Weather): Future[Option[Long]] = Future {
-    println(weather)
     db.withConnection { implicit connection =>
       val p = SQL("""
         insert into WEATHER values (
           (select next value for weather_seq),
-          {sunshine}, {temperature}, {humidity}, {wind}, CURRENT_TIMESTAMP()
+          {objectID}, {sunshine}, {temperature}, {humidity}, {wind}, CURRENT_TIMESTAMP()
         )""").bind(weather).executeInsert()
-//      val p = SQL("""
-//        insert into WEATHER values (
-//          1002, true, 1, 2, 3, CURRENT_TIMESTAMP()
-//        )
-//      """).bind(weather).executeInsert()
       p
     }
   }(ec)
 
-//
-//  /**
-//    * Delete a computer.
-//    *
-//    * @param id Id of the computer to delete.
-//    */
-//  def delete(id: Long) = Future {
-//    db.withConnection { implicit connection =>
-//      SQL"delete from computer where id = ${id}".executeUpdate()
-//    }
-//  }(ec)
+  /**
+    * Delete a weather.
+    *
+    * @param id Id of the weather to delete.
+    */
+  def delete(id: Long) = Future {
+    db.withConnection { implicit connection =>
+      SQL"delete from WEATHER where id = ${id}".executeUpdate()
+    }
+  }(ec)
 
 }

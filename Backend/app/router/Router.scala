@@ -27,6 +27,8 @@ class Router @Inject()(controller: MyController) extends SimpleRouter {
       controller.processState
     case POST(p"/processQuality") =>
       controller.processFruitQuality
+    case POST(p"/processAlert") =>
+      controller.processAlert
   }
 
 }

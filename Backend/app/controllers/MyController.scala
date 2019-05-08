@@ -32,25 +32,21 @@ import models._
 class MyController @Inject()(implicit ec: ExecutionContext,
                              ws: WSClient,
                              val controllerComponents: ControllerComponents,
-                             weatherService: WeatherRepository) extends BaseController {
+                             weatherService: WeatherRepository,
+                             stateService: StateRepository,
+                             fruitQualityService: FruitQualityRepository,
+                             alertService: AlertRepository) extends BaseController {
 
-//  val weatherForm = Form(
-//    mapping(
-//      "id" -> ignored(None: Option[Long]),
-//      "sunshine" -> optional(boolean),
-//      "temperature" -> optional(float),
-//      "humidity" -> optional(float),
-//      "wind" -> optional(float),
-//      "timeStamp" -> optional(date("dd-MM-yyyy- HH:mm:ss a")), //HH:mm:ss a
-//    )(Weather.apply)(Weather.unapply)
+  //  val weatherForm = Form(
+  //    mapping(
+  //      "id" -> ignored(None: Option[Long]),
+  //      "sunshine" -> optional(boolean),
+  //      "temperature" -> optional(float),
+  //      "humidity" -> optional(float),
+  //      "wind" -> optional(float),
+  //      "timeStamp" -> optional(date("dd-MM-yyyy- HH:mm:ss a")), //HH:mm:ss a
+  //    )(Weather.apply)(Weather.unapply)
 
-//
-//  case class Weather(id: Option[Long] = None,
-//                     sunshine: Option[Boolean],
-//                     temperature: Option[Float],
-//                     humidity: Option[Float],
-//                     wind: Option[Float],
-//                     timeStamp: Option[Date])
 
   def responseToResult(response: WSResponse): Result = {
 
@@ -91,69 +87,62 @@ class MyController @Inject()(implicit ec: ExecutionContext,
     getInfo("http://localhost:9001/v1/posts/quality")
   }
 
-  def getCurrentdateTimeStamp: Timestamp ={
-    val today:java.util.Date = Calendar.getInstance.getTime
-    val timeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-    val now:String = timeFormat.format(today)
-    val re = java.sql.Timestamp.valueOf(now)
-    re
-  }
-
-
   def processState = Action { request =>
-    request.body.asJson.map { jsonObj =>
-        val json = jsonObj(0)
-        val chargeperc = (json \ "chargeperc").asOpt[Int].get
-        val temperature = (json \ "temperature").asOpt[Int].get
-        val placename = (json \ "place" \"name").asOpt[String].get
-        val lat = (json \ "place" \"location" \ "lat").asOpt[Float].get
-        val long = (json \"place" \ "location" \ "long").asOpt[Float].get
-
+    request.body.asJson.map { json =>
+      val objectId = (json.head \ "objectID").asOpt[Int]
+      val chargeperc = (json.head \ "chargeperc").asOpt[Float]
+      val temperature = (json.head \ "temperature").asOpt[Float]
+      val placename = (json.head \ "place" \ "name").asOpt[String]
+      val lat = (json.head \ "place" \ "location" \ "lat").asOpt[Float]
+      val long = (json.head \ "place" \ "location" \ "long").asOpt[Float]
       println("Recieve State")
-//        println(chargeperc)
-//        println(temperature)
-//        println(lat)
-//        println(long)
-//        println(placename)
-        Ok("Saved with sucess")
-      }.getOrElse {
+      val state = new State(None, objectId, chargeperc, temperature, placename, lat, long, None)
+      stateService.insert(state)
+      Ok("State saved with sucess")
+    }.getOrElse {
       BadRequest("Expecting Json data")
     }
   }
 
 
-
   def processWeather = Action { request =>
-    request.body.asJson.map { jsonObj =>
-      val json = jsonObj(0)
-      val sunshine = (json \ "sunshine" ).asOpt[Boolean]//.get
-      val temperature = (json \ "temperature").asOpt[Float]//.get
-      val humidity = (json \ "humidity").asOpt[Float]//.get
-      val wind = (json \ "wind" ).asOpt[Float]//.get
+    request.body.asJson.map { json =>
+      val objectId = (json.head \ "objectID").asOpt[Int]
+      val sunshine = (json.head \ "sunshine").asOpt[Boolean]
+      val temperature = (json.head \ "temperature").asOpt[Float]
+      val humidity = (json.head \ "humidity").asOpt[Float]
+      val wind = (json.head \ "wind").asOpt[Float]
       println("Recieve Weather")
-
-      val weather = new Weather(None, sunshine, temperature, humidity, wind, None)
+      val weather = new Weather(None, objectId, sunshine, temperature, humidity, wind, None)
       weatherService.insert(weather)
-
-//      println(sunshine)
-//      println(temperature)
-//      println(humidity)
-//      println(wind)
-      Ok("Saved with sucess")
+      Ok("Weather saved with sucess")
     }.getOrElse {
       BadRequest("Expecting Json data")
     }
   }
 
   def processFruitQuality = Action { request =>
-    request.body.asJson.map { jsonObj =>
-      val json = jsonObj(0)
-      val mature = (json \ "mature").asOpt[Boolean].get
-      val sickness = (json \ "sickness").asOpt[Boolean].get
+    request.body.asJson.map { json =>
+      val objectId = (json.head \ "objectID").asOpt[Int]
+      val mature = (json.head \ "mature").asOpt[Boolean]
+      val sickness = (json.head \ "sickness").asOpt[Boolean]
       println("Recieve Quality")
-      //      println(mature)
-//      println(sickness)
-      Ok("Saved with sucess")
+      val fruitQuality = new FruitQuality(None, objectId, mature, sickness, None)
+      fruitQualityService.insert(fruitQuality)
+      Ok("FruitQuality saved with sucess")
+    }.getOrElse {
+      BadRequest("Expecting Json data")
+    }
+  }
+
+  def processAlert = Action { request =>
+    request.body.asJson.map { json =>
+      val objectId = (json \ "objectID").asOpt[Int]
+      val alertType = (json \ "alertType").asOpt[String]
+      println("Recieve Alert")
+      val alert = new Alert(None, objectId, alertType, None)
+      alertService.insert(alert)
+      Ok("Alert saved with sucess")
     }.getOrElse {
       BadRequest("Expecting Json data")
     }
