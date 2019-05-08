@@ -1,6 +1,6 @@
 package v1.post
 
-import java.io.File
+import java.io.{PrintWriter, File}
 import java.util.{Date, Calendar}
 import java.text.SimpleDateFormat
 import javax.inject.Inject
@@ -84,7 +84,16 @@ class MyController @Inject()(implicit ec: ExecutionContext,
   }
 
   def getFruitQuality() = {
-    getInfo("http://localhost:9001/v1/posts/quality")
+    getInfo("http://localhost:9001/v1/posts/qualityFruit")
+  }
+
+  def getBoard() = {
+    val dir = new File("conf")
+    //val files = dir.list.map{x => Json.parse(Source.fromFile("csvjson/"+x).getLines.mkString)}
+    val objects = Source.fromFile("conf/objects.conf")
+                        .getLines.map{x => Json.parse(x)}
+                        .map{x => ((x \ "name").asOpt[String].get, (x \ "ip").asOpt[String].get)}.toList
+    Action{Ok(views.html.board(objects))}
   }
 
   def processState = Action { request =>

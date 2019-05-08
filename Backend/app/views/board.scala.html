@@ -1,0 +1,27 @@
+@import play.api.libs.json._
+@import play.api.mvc._
+@import play.api.mvc.Results._
+@(jsons: List[(String,String)])
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Play REST API</title>
+  </head>
+
+  <body>
+    <h1>Play REST API</h1>
+
+    <p>
+      This is a placeholder page to show you the REST API.
+    </p>
+      
+    <ul>
+        @for(obj <- jsons) {
+          <li><a href=@obj._2>/@obj._1</a></li>
+        }
+    
+      <li><a href="/">/ -- return to home -- </a></li>
+    </ul>
+    
+  </body>
+</html>
