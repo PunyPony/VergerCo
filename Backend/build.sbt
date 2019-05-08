@@ -15,11 +15,18 @@ libraryDependencies += "com.typesafe.play" %% "play-iteratees" % "2.6.1"
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "4.0.1" % Test
 libraryDependencies += "io.gatling.highcharts" % "gatling-charts-highcharts" % "3.0.1.1" % Test
 libraryDependencies += "io.gatling" % "gatling-test-framework" % "3.0.1.1" % Test
+libraryDependencies += "com.h2database" % "h2" % "1.4.197"
+libraryDependencies += "org.playframework.anorm" %% "anorm" % "2.6.2"
 libraryDependencies ++= Seq(
-  ws
+  "com.typesafe.akka" %% "akka-http" % "10.1.8",
+  "com.typesafe.akka" %% "akka-http-testkit" % "10.1.8" % Test
 )
+
+libraryDependencies += ws
 libraryDependencies += ehcache
 libraryDependencies += jdbc
+libraryDependencies += guice
+libraryDependencies += evolutions
 
 // The Play project itself
 lazy val root = (project in file("."))
@@ -27,7 +34,7 @@ lazy val root = (project in file("."))
   .configs(GatlingTest)
   .settings(inConfig(GatlingTest)(Defaults.testSettings): _*)
   .settings(
-    name := """play-scala-rest-api-example""",
+    name := """Backend""",
     scalaSource in GatlingTest := baseDirectory.value / "/gatling/simulation"
   )
 

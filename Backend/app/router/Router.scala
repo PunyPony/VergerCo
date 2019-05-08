@@ -9,7 +9,7 @@ import play.api.routing.sird._
 /**
   * Routes and URLs to the PostResource controller.
   */
-class PostRouter @Inject()(controller: MyController) extends SimpleRouter {
+class Router @Inject()(controller: MyController) extends SimpleRouter {
   val prefix = "v1/posts"
 
   override def routes: Routes = {
@@ -21,8 +21,6 @@ class PostRouter @Inject()(controller: MyController) extends SimpleRouter {
       controller.getState
     case GET(p"/quality") =>
       controller.getFruitQuality
-    case GET(p"/processJson") =>
-      controller.processJson
     case POST(p"/processWeather") =>
       controller.processWeather
     case POST(p"/processState") =>

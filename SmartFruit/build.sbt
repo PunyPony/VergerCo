@@ -15,11 +15,8 @@ libraryDependencies += "com.typesafe.play" %% "play-iteratees" % "2.6.1"
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "4.0.1" % Test
 libraryDependencies += "io.gatling.highcharts" % "gatling-charts-highcharts" % "3.0.1.1" % Test
 libraryDependencies += "io.gatling" % "gatling-test-framework" % "3.0.1.1" % Test
-libraryDependencies ++= Seq(
-  ws
-)
+libraryDependencies += ws
 libraryDependencies += ehcache
-libraryDependencies += jdbc
 
 // The Play project itself
 lazy val root = (project in file("."))
@@ -27,7 +24,7 @@ lazy val root = (project in file("."))
   .configs(GatlingTest)
   .settings(inConfig(GatlingTest)(Defaults.testSettings): _*)
   .settings(
-    name := """play-scala-rest-api-example""",
+    name := """SmartFruit""",
     scalaSource in GatlingTest := baseDirectory.value / "/gatling/simulation"
   )
 
