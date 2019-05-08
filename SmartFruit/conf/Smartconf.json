@@ -1,0 +1,6 @@
+{
+  "conf": {
+    "backendURL": "http://localhost:9000/",
+    "objID": 0
+  }
+}

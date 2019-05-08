@@ -10,9 +10,9 @@ import scala.concurrent.duration._
 import v1.post._
 import play.api.libs.ws._
 import play.api.mvc._
-import play.api.test._
 import play.api.libs.json._
 import sensors._
+import confreader._
 import play.api.libs.functional.syntax._
 
 
@@ -64,7 +64,6 @@ object CSVReader {
     ) (unlift(FruitQuality.unapply))
 
 
-
   def BoolFromString(value: String) = {
     value.toInt == 1
   }
@@ -79,21 +78,24 @@ object CSVReader {
   def getState(sensor: String): JsValue = {
     val file = checkFile(sensor)
     val content: Iterator[Array[String]] = Source.fromFile(sensor).getLines.map(_.split(",")).drop(1)
-    val caseClass = content.toList.map(t => State(0, t(0).toFloat, t(1).toFloat, Place(t(4), Location(t(2).toDouble, t(3).toDouble))))
+    val id = confReader.getObjID()
+    val caseClass = content.toList.map(t => State(id, t(0).toFloat, t(1).toFloat, Place(t(4), Location(t(2).toDouble, t(3).toDouble))))
     Json.toJson(caseClass)
   }
 
   def getWeather(sensor: String): JsValue = {
     val file = checkFile(sensor)
+    val id = confReader.getObjID()
     val content: Iterator[Array[String]] = Source.fromFile(sensor).getLines.map(_.split(",")).drop(1)
-    val caseClass = content.toList.map(t => Weather(0, BoolFromString(t(0)), t(1).toFloat, t(2).toFloat, t(3).toFloat))
+    val caseClass = content.toList.map(t => Weather(id, BoolFromString(t(0)), t(1).toFloat, t(2).toFloat, t(3).toFloat))
     Json.toJson(caseClass)
   }
 
   def getFruit(sensor: String): JsValue = {
     val file = checkFile(sensor)
+    val id = confReader.getObjID()
     val content: Iterator[Array[String]] = Source.fromFile(sensor).getLines.map(_.split(",")).drop(1)
-    val caseClass = content.toList.map(t => FruitQuality(0, BoolFromString(t(0)), BoolFromString(t(1))))
+    val caseClass = content.toList.map(t => FruitQuality(id, BoolFromString(t(0)), BoolFromString(t(1))))
     Json.toJson(caseClass)
   }
 }

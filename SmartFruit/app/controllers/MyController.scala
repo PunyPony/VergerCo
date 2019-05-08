@@ -6,6 +6,7 @@ import play.api.Logger
 import play.api.data.Form
 import play.api.mvc._
 import play.api.libs.ws._
+import confreader._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent._
@@ -52,24 +53,28 @@ class MyController @Inject()(implicit ec: ExecutionContext, ws: WSClient, val co
 
   def pushWeather() = {
     val jsonSensor = CSVReader.getWeather("csvjson/weather.csv")
+    val url = confReader.getURL()
     checkWeatherAlert(jsonSensor)
-    MetaPushInfo("http://localhost:9000/v1/posts/processWeather", jsonSensor)
+    MetaPushInfo(url+"v1/posts/processWeather", jsonSensor)
   }
 
   def pushState() = {
     val jsonSensor = CSVReader.getState("csvjson/state.csv")
+    val url = confReader.getURL()
     checkStateAlert(jsonSensor)
-    MetaPushInfo("http://localhost:9000/v1/posts/processState", jsonSensor)
+    MetaPushInfo(url+"v1/posts/processState", jsonSensor)
   }
 
   def pushFruitQuality() = {
     val jsonSensor = CSVReader.getFruit("csvjson/quality.csv")
+    val url = confReader.getURL()
     checkFruitQualityAlert(jsonSensor)
-    MetaPushInfo("http://localhost:9000/v1/posts/processQuality", jsonSensor)
+    MetaPushInfo(url+"v1/posts/processQuality", jsonSensor)
   }
 
   def pushFruitAlert(alert: JsValue) = {
-    MetaPushInfo("http://localhost:9000/v1/posts/processAlert", alert)
+    val url = confReader.getURL()
+    MetaPushInfo(url+"v1/posts/processAlert", alert)
   }
 
   def getSensor(sensor: JsValue): Action[AnyContent] = Action.async {
@@ -82,28 +87,34 @@ class MyController @Inject()(implicit ec: ExecutionContext, ws: WSClient, val co
   def checkStateAlert(state: JsValue): Unit = {
     val charge = (state.head \ "chargeperc").as[Float]
     val temperature = (state.head \ "temperature").as[Float]
+    val url = confReader.getURL()
+    val id = confReader.getObjID()
     if (charge <= 15)
-      PushInfo("http://localhost:9000/v1/posts/processAlert", Json.toJson(new Alert(0, "Sys : Critical battery low")))
+      PushInfo(url+"v1/posts/processAlert", Json.toJson(new Alert(id, "Sys : Critical battery low")))
     if (temperature >= 70)
-      PushInfo("http://localhost:9000/v1/posts/processAlert", Json.toJson(new Alert(0, "Sys : High critical temperature")))
+      PushInfo(url+"v1/posts/processAlert", Json.toJson(new Alert(id, "Sys : High critical temperature")))
   }
 
   def checkWeatherAlert(weather: JsValue): Unit = {
     val temperature = (weather.head \ "temperature").as[Float]
     val wind = (weather.head \ "wind").as[Float]
+    val url = confReader.getURL()
+    val id = confReader.getObjID()
     if (wind >= 40)
-      PushInfo("http://localhost:9000/v1/posts/processAlert", Json.toJson(new Alert(0, "Warning : High wind speed")))
+      PushInfo(url+"v1/posts/processAlert", Json.toJson(new Alert(id, "Warning : High wind speed")))
     if (temperature >= 28)
-      PushInfo("http://localhost:9000/v1/posts/processAlert", Json.toJson(new Alert(0, "Warning : High temperature")))
+      PushInfo(url+"v1/posts/processAlert", Json.toJson(new Alert(id, "Warning : High temperature")))
   }
 
   def checkFruitQualityAlert(fruitQuality: JsValue): Unit = {
     val mature = (fruitQuality.head \ "mature").as[Boolean]
     val sickness = (fruitQuality.head \ "sickness").as[Boolean]
+    val url = confReader.getURL()
+    val id = confReader.getObjID()
     if (mature)
-      PushInfo("http://localhost:9000/v1/posts/processAlert", Json.toJson(new Alert(0, "Your fruits are mature !")))
+      PushInfo(url+"v1/posts/processAlert", Json.toJson(new Alert(id, "Your fruits are mature !")))
     if (sickness)
-      PushInfo("http://localhost:9000/v1/posts/processAlert", Json.toJson(new Alert(0, "Warning : Your fruits seems to be sick.")))
+      PushInfo(url+"v1/posts/processAlert", Json.toJson(new Alert(id, "Warning : Your fruits seems to be sick.")))
   }
 
   def getState: Action[AnyContent] = {
