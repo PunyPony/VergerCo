@@ -132,7 +132,7 @@ class MyController @Inject()(implicit ec: ExecutionContext,
       val wind = (json \ "wind" ).asOpt[Float]//.get
       println("Recieve Weather")
 
-      val weather = new Weather(None, sunshine, temperature, humidity, wind, /*Some(getCurrentdateTimeStamp)*/None)
+      val weather = new Weather(None, sunshine, temperature, humidity, wind, None)
       weatherService.insert(weather)
 
 //      println(sunshine)

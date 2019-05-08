@@ -15,7 +15,7 @@ case class Weather(id: Option[Long] = None,
                     temperature: Option[Float],
                     humidity: Option[Float],
                     wind: Option[Float],
-                    timeStamp: Option[Timestamp])
+                    timeStamp: Option[Timestamp] = None)
 object Weather {
   implicit def toParameters: ToParameterList[Weather] =
     Macro.toParameters[Weather]
@@ -98,10 +98,13 @@ class WeatherRepository @Inject()(dbapi: DBApi)(implicit ec: DatabaseExecutionCo
       val p = SQL("""
         insert into WEATHER values (
           (select next value for weather_seq),
-          {sunshine}, {temperature}, {humidity}, {wind}, {timeStamp}
-        )
-      """).bind(weather).executeInsert()
-      print(p)
+          {sunshine}, {temperature}, {humidity}, {wind}, CURRENT_TIMESTAMP()
+        )""").bind(weather).executeInsert()
+//      val p = SQL("""
+//        insert into WEATHER values (
+//          1002, true, 1, 2, 3, CURRENT_TIMESTAMP()
+//        )
+//      """).bind(weather).executeInsert()
       p
     }
   }(ec)
