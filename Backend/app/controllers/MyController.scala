@@ -90,9 +90,9 @@ class MyController @Inject()(implicit ec: ExecutionContext,
   def getBoard() = {
     val dir = new File("conf")
     //val files = dir.list.map{x => Json.parse(Source.fromFile("csvjson/"+x).getLines.mkString)}
-    val objects = Source.fromFile("conf/objects.conf")
-                        .getLines.map{x => Json.parse(x)}
-                        .map{x => ((x \ "name").asOpt[String].get, (x \ "ip").asOpt[String].get)}.toList
+    val objects = (Json.parse(Source.fromFile("conf/objects.conf").getLines.mkString) \ "objects")
+                       .asOpt[List[JsValue]].get
+                       .map{x => ((x \ "name").asOpt[String].get, (x \ "ip").asOpt[String].get)}.toList
     Action{Ok(views.html.board(objects))}
   }
 
