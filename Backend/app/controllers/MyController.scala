@@ -96,6 +96,10 @@ class MyController @Inject()(implicit ec: ExecutionContext,
     Action{Ok(views.html.board(objects))}
   }
 
+  def getObjInfo(ip : String) = {
+    Action{Ok(views.html.info(ip))}
+  }
+
   def processState = Action { request =>
     request.body.asJson.map { json =>
       val objectId = (json.head \ "objectID").asOpt[Int]

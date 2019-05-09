@@ -1,5 +1,6 @@
 GET        /                       controllers.HomeController.index
 GET        /v1/posts/board         v1.post.MyController.getBoard
+GET        /v1/posts/board/*ip     v1.post.MyController.getObjInfo(ip)
 
 ->         /v1/posts               v1.post.Router
 
