@@ -33,6 +33,8 @@ import scala.language.postfixOps
 import play.api.test._
 //import play.api.test.Helpers._
 
+case class ObjAlert(name : String, url : String)
+
 class MyController @Inject()(implicit ec: ExecutionContext,
                              ws: WSClient,
                              val controllerComponents: ControllerComponents,
@@ -113,7 +115,7 @@ class MyController @Inject()(implicit ec: ExecutionContext,
 
     val result = Redirect(ip + "/v1/posts/state");
   //  print(Helpers.contentAsString(Result result))
-    Action{Ok(views.html.info(ip, state))}
+    Action{Ok(views.html.info(ip, weather, state, quality))}
   }
 
   def processState = Action { request =>
