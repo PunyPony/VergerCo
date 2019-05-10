@@ -17,7 +17,7 @@
       
     <ul>
         @for(obj <- jsons) {
-          <li><a href=@("/v1/posts/board/" + obj._2)>/@obj._1</a></li>
+          <li><a href=@("board/" + obj._2)>/@obj._1</a></li>
         }
     
       <li><a href="/">/ -- return to home -- </a></li>

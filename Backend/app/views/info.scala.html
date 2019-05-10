@@ -1,4 +1,5 @@
-@(ip : String)
+@import play.api.libs.json._
+@(ip : String, state : JsValue)
 <!doctype html>
 
 <html lang="en">
@@ -15,10 +16,33 @@
     </p>
 
     <ul>
-      <li><a href=@(ip + "/v1/posts/state")>/v1/posts/State</a></li>
-      <li><a href=@(ip + "/v1/posts/weather")>/v1/posts/Weather</a></li>
-      <li><a href=@(ip + "/v1/posts/quality")>/v1/posts/Quality</a></li>
-      <li><a href="/v1/posts/board">/return to v1/posts/board</a></li>
+      <li><a href=@(ip + "/state")>/State</a></li>
+      <li><a href=@(ip + "/weather")>/Weather</a></li>
+      <li><a href=@(ip + "/quality")>/Quality</a></li>
+    </ul>
+
+     <table border=1>
+        <thead>
+            <tr>
+                <th>objectID</th>
+                <th>chargeperc</th>
+                <th>temperature</th>
+                <th>place</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@((state.head \ "objectID").asOpt[Int])</td>
+                <td>@((state.head\ "chargeperc").asOpt[Float])</td>
+                <td>21</td>
+                <td>Sandleford => Lat : @((state.head \ "place" \ "location" \ "lat").asOpt[Float]) |
+                                  Long : @((state.head \ "place" \ "location" \ "long").asOpt[Float])</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+      <li><a href="/board">/return to /board</a></li>
     </ul>
   </body>
 </html>

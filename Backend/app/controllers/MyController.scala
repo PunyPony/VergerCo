@@ -1,4 +1,4 @@
-package v1.post
+package controllers
 
 import java.io.{PrintWriter, File}
 import java.util.{Date, Calendar}
@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent._
+import scala.util.{Try,Success,Failure}
 import scala.io.Source
 import javax.inject.Inject
 import scala.concurrent.duration._
@@ -28,6 +29,9 @@ import play.api.libs.functional.syntax._
 import play.api.libs.iteratee.Enumerator
 import play.api.libs.ws._
 import models._
+import scala.language.postfixOps
+import play.api.test._
+//import play.api.test.Helpers._
 
 class MyController @Inject()(implicit ec: ExecutionContext,
                              ws: WSClient,
@@ -75,6 +79,12 @@ class MyController @Inject()(implicit ec: ExecutionContext,
     }
   }
 
+  def getInfa(url: String) = {
+    val requestObj: WSRequest = ws.url(url)
+    val futureResponse: Future[WSResponse] = requestObj.get()
+    futureResponse
+  }
+
   def getWeather() = {
     getInfo("http://localhost:9001/v1/posts/weather")
   }
@@ -97,7 +107,13 @@ class MyController @Inject()(implicit ec: ExecutionContext,
   }
 
   def getObjInfo(ip : String) = {
-    Action{Ok(views.html.info(ip))}
+    val weather = Await.result(getInfa(ip + "/weather"), 1 seconds).json
+    val state = Await.result(getInfa(ip + "/state"), 1 seconds).json
+    val quality = Await.result(getInfa(ip + "/quality"), 1 seconds).json
+
+    val result = Redirect(ip + "/v1/posts/state");
+  //  print(Helpers.contentAsString(Result result))
+    Action{Ok(views.html.info(ip, state))}
   }
 
   def processState = Action { request =>

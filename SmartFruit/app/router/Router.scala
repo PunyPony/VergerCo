@@ -1,4 +1,4 @@
-package v1.post
+package controllers
 
 import javax.inject.Inject
 
