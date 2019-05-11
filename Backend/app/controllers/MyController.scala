@@ -105,7 +105,7 @@ class MyController @Inject()(implicit ec: ExecutionContext,
     //val files = dir.list.map{x => Json.parse(Source.fromFile("csvjson/"+x).getLines.mkString)}
     val objects = (Json.parse(Source.fromFile("conf/objects.conf").getLines.mkString) \ "objects")
       .asOpt[List[JsValue]].get
-      .map{x => ((x \ "name").asOpt[String].get, (x \ "ip").asOpt[String].get)}.toList
+      .map{x => ((x \ "name").asOpt[String].get, (x \ "ip").asOpt[String].get, (x \ "id").asOpt[Int].get)}.toList
     objects
   }
 
