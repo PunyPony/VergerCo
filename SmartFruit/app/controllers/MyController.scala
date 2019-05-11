@@ -62,7 +62,7 @@ class MyController @Inject()(implicit ec: ExecutionContext, ws: WSClient, val co
     val jsonSensor = CSVReader.getState("csvjson/state.csv")
     val url = confReader.getURL()
     checkStateAlert(jsonSensor)
-    MetaPushInfo(url+"/processState", jsonSensor)
+    MetaPushInfo(url+"processState", jsonSensor)
   }
 
   def pushFruitQuality() = {
