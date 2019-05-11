@@ -11,9 +11,9 @@
 
   @main(objects, alerts) {
 
-    @if((state.head\ "chargeperc").asOpt[Float].get < 40) {
+    @if((state.head\ "chargeperc").asOpt[Float].get < 30) {
         <div class="alert alert-danger" role="alert">
-          This object is low battery (under 40%), <a href="#" class="alert-link">check it !</a>
+          Cet objet à une faible battrie ! <a href="#" class="alert-link">Verifiez-la !</a>
           <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -21,12 +21,20 @@
     }
     @if((quality.head\ "mature").asOpt[Boolean].get) {
         <div class="alert alert-success" role="alert">
-          This verger is mature, <a href="#" class="alert-link">check it !</a>
+          Les fruits sont mures ! <a href="#" class="alert-link">Verifiez-les !</a>
           <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
     }
+    @if((weather.head\ "temperature").asOpt[Float].get >= 28) {
+      <div class="alert alert-danger" role="alert">
+          Il fait vraiment chaud aujourd'hui ! <a href="#" class="alert-link">Attention a vos fruits !</a>
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+          </button>
+      </div>
+  }
 
   <body>
 
@@ -115,7 +123,7 @@
       
     <p></p>
     <ul>
-      <a type="button" href="/board" class="btn btn-outline-primary">-- Return to board --</a>
+      <a type="button" href="/" class="btn btn-outline-primary">-- Return to board --</a>
     </ul>
   </body>
   }

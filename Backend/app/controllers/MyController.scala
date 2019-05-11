@@ -128,8 +128,6 @@ class MyController @Inject()(implicit ec: ExecutionContext,
     val state = Await.result(getInfo(ip + "/state"), 1 seconds).json
     val quality = Await.result(getInfo(ip + "/quality"), 1 seconds).json
 
-    val result = Redirect(ip + "/v1/posts/state");
-  //  print(Helpers.contentAsString(Result result))
     Action.async {
       val r: Future[Result] = Future.successful(
         Ok(views.html.info(getObjects, getAlerts, ip, weather, state, quality)))
