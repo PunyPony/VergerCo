@@ -116,8 +116,8 @@ class MyController @Inject()(implicit ec: ExecutionContext,
   {
     val alertsFuture = alertService.list(5)
     val alerts = Await.result(alertsFuture, 1 seconds)
-    alerts.filter(alert => alert.timeStamp.get.after(new Date(System.currentTimeMillis() - 3600 * 1000)))
-
+    //alerts.filter(alert => alert.timeStamp.get.after(new Date(System.currentTimeMillis() - 3600 * 1000)))
+    alerts
   }
 
   def getTableWeather() = {
@@ -157,7 +157,6 @@ class MyController @Inject()(implicit ec: ExecutionContext,
 
   def getBoard() = {
     Action.async { implicit request =>
-      println(getLastHourAlerts())
       val r: Future[Result] = Future.successful(Ok(views.html.board(getObjects, getLastHourAlerts)))
       r
     }
