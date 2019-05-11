@@ -109,20 +109,30 @@ class MyController @Inject()(implicit ec: ExecutionContext,
     objects
   }
 
-  def getTableWeather() = {"lol"}
   def getTableState() = {"lol"}
   def getTableFruitQuality() = {"lol"}
   def getTableAlert() = {"lol"}
 
-  def getLastHourAlerts() =
+  def getLastHourAlerts() : List[Alert] =
   {
-    val alertsFuture = alertService.list(10)
+    val alertsFuture = alertService.list(5)
     val alerts = Await.result(alertsFuture, 1 seconds)
     alerts.filter(alert => alert.timeStamp.get.after(new Date(System.currentTimeMillis() - 3600 * 1000)))
+
+  }
+
+  def getTableWeather() = {
+    Action.async { implicit request =>
+      val WeatherFuture = weatherService.list(100)
+      val weathers = Await.result(WeatherFuture, 1 seconds)
+      val r: Future[Result] = Future.successful(Ok(views.html.tableWeather(getObjects, getLastHourAlerts, weathers)))
+      r
+    }
   }
 
   def getBoard() = {
     Action.async { implicit request =>
+      println(getLastHourAlerts())
       val r: Future[Result] = Future.successful(Ok(views.html.board(getObjects, getLastHourAlerts)))
       r
     }
@@ -143,11 +153,11 @@ class MyController @Inject()(implicit ec: ExecutionContext,
   def processState = Action { request =>
     request.body.asJson.map { json =>
       val objectId = (json.head \ "objectID").asOpt[Int]
-      val chargeperc = (json.head \ "chargeperc").asOpt[Float]
-      val temperature = (json.head \ "temperature").asOpt[Float]
+      val chargeperc = (json.head \ "chargeperc").asOpt[Double]
+      val temperature = (json.head \ "temperature").asOpt[Double]
       val placename = (json.head \ "place" \ "name").asOpt[String]
-      val lat = (json.head \ "place" \ "location" \ "lat").asOpt[Float]
-      val long = (json.head \ "place" \ "location" \ "long").asOpt[Float]
+      val lat = (json.head \ "place" \ "location" \ "lat").asOpt[Double]
+      val long = (json.head \ "place" \ "location" \ "long").asOpt[Double]
       println("Recieve State")
       val state = new State(None, objectId, chargeperc, temperature, placename, lat, long, None)
       stateService.insert(state)
@@ -162,9 +172,9 @@ class MyController @Inject()(implicit ec: ExecutionContext,
     request.body.asJson.map { json =>
       val objectId = (json.head \ "objectID").asOpt[Int]
       val sunshine = (json.head \ "sunshine").asOpt[Boolean]
-      val temperature = (json.head \ "temperature").asOpt[Float]
-      val humidity = (json.head \ "humidity").asOpt[Float]
-      val wind = (json.head \ "wind").asOpt[Float]
+      val temperature = (json.head \ "temperature").asOpt[Double]
+      val humidity = (json.head \ "humidity").asOpt[Double]
+      val wind = (json.head \ "wind").asOpt[Double]
       println("Recieve Weather")
       val weather = new Weather(None, objectId, sunshine, temperature, humidity, wind, None)
       weatherService.insert(weather)

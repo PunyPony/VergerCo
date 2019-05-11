@@ -13,9 +13,9 @@ import anorm._
 case class Weather(id: Option[Long] = None,
                    objectID: Option[Int],
                     sunshine: Option[Boolean],
-                    temperature: Option[Float],
-                    humidity: Option[Float],
-                    wind: Option[Float],
+                    temperature: Option[Double],
+                    humidity: Option[Double],
+                    wind: Option[Double],
                     timeStamp: Option[Date] = None)
 object Weather {
   implicit def toParameters: ToParameterList[Weather] =
@@ -40,9 +40,9 @@ class WeatherRepository @Inject()(dbapi: DBApi)(implicit ec: DatabaseExecutionCo
     get[Option[Long]]("id") ~
       get[Option[Int]]("objectID") ~
       get[Option[Boolean]]("sunshine") ~
-      get[Option[Float]]("temperature") ~
-      get[Option[Float]]("humidity") ~
-      get[Option[Float]]("wind") ~
+      get[Option[Double]]("temperature") ~
+      get[Option[Double]]("humidity") ~
+      get[Option[Double]]("wind") ~
       get[Option[Date]]("timeStamp")
     ) map {
     case id ~ objectID ~ sunshine ~ temperature ~ humidity ~ wind ~ timeStamp => // etc...

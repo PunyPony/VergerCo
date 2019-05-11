@@ -83,7 +83,7 @@ class AlertRepository @Inject()(dbapi: DBApi)(implicit ec: DatabaseExecutionCont
    * @param orderBy Computer property used for sorting
    * @param filter Filter applied on the name column
    */
-  def list(/*page: Int = 0, */pageSize: Int = 10/*, orderBy: Int = 1, filter: String = "%"*/): Future[List[Alert]] = Future {
+  def list(pageSize: Int): Future[List[Alert]] = Future {
 
     //val offest = pageSize * page
 

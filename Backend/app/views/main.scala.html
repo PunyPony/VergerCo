@@ -63,11 +63,11 @@
 
                     <!-- Nav Item - Pages Collapse Menu -->
                 <li class="nav-item">
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="true" aria-controls="collapsePages">
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseObj" aria-expanded="true" aria-controls="collapsePages">
                         <i class="fas fa-microchip"></i>
                         <span>Vos appareils</span>
                     </a>
-                    <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                    <div id="collapseObj" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                         <div class="bg-white py-2 collapse-inner rounded">
                               @for(obj <- objects) {
                                 <a class="collapse-item" href=@routes.MyController.getObjInfo(obj._2)>@obj._1</a>
@@ -167,7 +167,7 @@
                                     <h6 class="dropdown-header">
                                         Centre d'Alerte
                                     @for(alert <- alerts) {
-                                    <a class="dropdown-item d-flex align-items-center" href="@routes.MyController.getObjInfo(objects.filter(o => o._3==alert.objectID.get).head._2)">
+                                    <a class="dropdown-item d-flex align-items-center" href=@routes.MyController.getObjInfo(objects.filter(o => o._3==alert.objectID.get).head._2)>
 
                                         <div class="mr-3">
                                             <div class="icon-circle bg-warning">

@@ -13,11 +13,11 @@ import anorm._
 
 case class State(id: Option[Long] = None,
                  objectID: Option[Int],
-                 chargeperc: Option[Float],
-                 temperature: Option[Float],
+                 chargeperc: Option[Double],
+                 temperature: Option[Double],
                  placename: Option[String],
-                 lat: Option[Float],
-                 long: Option[Float],
+                 lat: Option[Double],
+                 long: Option[Double],
                  timeStamp: Option[Date] = None)
 
 object State {
@@ -43,11 +43,11 @@ class StateRepository @Inject()(dbapi: DBApi)(implicit ec: DatabaseExecutionCont
   val StateParser: RowParser[State] = (
     get[Option[Long]]("id") ~
       get[Option[Int]]("objectID") ~
-      get[Option[Float]]("chargeperc") ~
-      get[Option[Float]]("temperature") ~
+      get[Option[Double]]("chargeperc") ~
+      get[Option[Double]]("temperature") ~
       get[Option[String]]("placename") ~
-      get[Option[Float]]("lat") ~
-      get[Option[Float]]("long") ~
+      get[Option[Double]]("lat") ~
+      get[Option[Double]]("long") ~
       get[Option[Date]]("timeStamp")
     ) map {
     case id ~ objectID ~ chargeperc ~ temperature ~ placename ~ lat ~ long ~ timeStamp => // etc...

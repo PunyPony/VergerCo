@@ -1,6 +1,6 @@
 GET        /                       controllers.MyController.getBoard
 GET        /info             controllers.MyController.getObjInfo(ip)
-
+GET        /tableWeather     controllers.MyController.getTableWeather()
 ->         /                       controllers.Router
 
 # Map static resources from the /public folder to the /assets URL path
