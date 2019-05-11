@@ -14,7 +14,7 @@ import anorm._
 case class Alert(id: Option[Long] = None,
                  objectID: Option[Int],
                  alertType: Option[String],
-                 timeStamp: Option[Timestamp] = None)
+                 timeStamp: Option[Date] = None)
 
 object Alert {
   implicit def toParameters: ToParameterList[Alert] =
@@ -25,6 +25,18 @@ object Alert {
 class AlertRepository @Inject()(dbapi: DBApi)(implicit ec: DatabaseExecutionContext) {
 
   private val db = dbapi.database("default")
+
+  val AlertParser: RowParser[Alert] = (
+  get[Option[Long]]("id") ~
+  get[Option[Int]]("objectID") ~
+  get[Option[String]]("alertType") ~
+  get[Option[Date]]("timeStamp")
+  ) map {
+    case id ~ objectID ~ alertType ~ timeStamp => // etc...
+      Alert(id, objectID, alertType, timeStamp) // etc...
+  }
+
+  val allRowsParser: ResultSetParser[List[Alert]] = AlertParser.*
 
 //  /**
 //    * Retrieve a alert from the id.
@@ -61,6 +73,35 @@ class AlertRepository @Inject()(dbapi: DBApi)(implicit ec: DatabaseExecutionCont
     db.withConnection { implicit connection =>
       SQL"delete from ALERT where id = ${id}".executeUpdate()
     }
+  }(ec)
+
+  /**
+   * Return a page of (Computer,Company).
+   *
+   * @param page Page to display
+   * @param pageSize Number of computers per page
+   * @param orderBy Computer property used for sorting
+   * @param filter Filter applied on the name column
+   */
+  def list(/*page: Int = 0, */pageSize: Int = 10/*, orderBy: Int = 1, filter: String = "%"*/): Future[List[Alert]] = Future {
+
+    //val offest = pageSize * page
+
+    db.withConnection { implicit connection =>
+
+      val alerts = SQL(
+        """
+          select * from alert
+          order by timestamp last
+          limit {pageSize}
+        """
+      ).on(
+        'pageSize -> pageSize,
+      ).as(allRowsParser)
+      alerts
+
+    }
+
   }(ec)
 
 }

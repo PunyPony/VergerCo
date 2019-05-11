@@ -6,7 +6,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Play REST API</title>
+    <title>@("Sensor " + (state.head\ "objectID").asOpt[Int].get)</title>
   </head>
 
   @main() {
@@ -29,16 +29,17 @@
     }
 
   <body>
-    <p>
-      This is a placeholder page to show you the REST API.
-    </p>
 
+    <!--
     <ul>
       <li><a href=@(ip + "/state")>/State</a></li>
       <li><a href=@(ip + "/weather")>/Weather</a></li>
       <li><a href=@(ip + "/quality")>/Quality</a></li>
-    </ul>
+    </ul> -->
 
+     <ul style="list-style:none">
+     <li>
+     <p class="text-primary"><strong>State of sensor :</strong></p>
      <div class="col-md-8">
      <table class="table table-bordered">
         <thead class="thead">
@@ -62,8 +63,10 @@
             </tr>
         </tbody>
     </table>
-     </div>
+    </div><li>
 
+    <li> 
+    <p class="text-success"><strong>Weather :</strong></p>
     <div class="col-md-6">
     <table class="table table-bordered">
         <thead  class="thead">
@@ -85,8 +88,10 @@
             </tr>
         </tbody>
     </table>
-    <div>
-      
+    <div></li>
+
+    <li>
+    <p class="text-danger"><strong>Quality of fruit :</strong></p>
     <div class="col-md-6">
     <table class="table table-bordered">
         <thead  class="thead">
@@ -104,11 +109,13 @@
             </tr>
         </tbody>
       </table>
-    </div>
+    </div></li>
+    </ul>
 
       
+    <p></p>
     <ul>
-      <li><a href="/board">/return to /board</a></li>
+      <a type="button" href="/board" class="btn btn-outline-primary">-- Return to board --</a>
     </ul>
   </body>
   }

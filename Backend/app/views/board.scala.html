@@ -1,26 +1,29 @@
 @import play.api.libs.json._
 @import play.api.mvc._
 @import play.api.mvc.Results._
-@(objects: List[(String,String)])
+@import models._
+@(objects: List[(String,String)], alerts : List[Alert])
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Play REST API</title>
+    <title>Dashboard</title>
   </head>
+  @alerts
 
   @main() {
   <body>
     <p>
-      This is a placeholder page to show you the REST API.
+      Select the connected sensor that you want to see :
     </p>
       
     <ul>
-        @for(obj <- objects) {
-          <li><a href=@("board/" + obj._2)>/@obj._1</a></li>
-        }
-    
-      <li><a href="/">/ -- return to home -- </a></li>
+          @for(obj <- objects) {
+            <li><a href=@("board/" + obj._2)>@obj._1</a></li>
+          }
+      <p></p>
     </ul>
+
+    <a type="button" href="/" class="btn btn-outline-primary">-- Return to home --</a>
   </body>
   }
 </html>

@@ -105,7 +105,12 @@ class MyController @Inject()(implicit ec: ExecutionContext,
     val objects = (Json.parse(Source.fromFile("conf/objects.conf").getLines.mkString) \ "objects")
                        .asOpt[List[JsValue]].get
                        .map{x => ((x \ "name").asOpt[String].get, (x \ "ip").asOpt[String].get)}.toList
-    Action{Ok(views.html.board(objects))}
+    Action.async { implicit request =>
+      val alertsFuture = alertService.list()
+      val alerts = Await.result(alertsFuture, 1 seconds)
+      val r: Future[Result] = Future.successful(Ok(views.html.board(objects, alerts)))
+      r
+    }
   }
 
   def getObjInfo(ip : String) = {
