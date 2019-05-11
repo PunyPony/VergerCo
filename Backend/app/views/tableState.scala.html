@@ -1,5 +1,5 @@
 @import play.api.libs.json._
-@(objects: List[(String, String, Int)], alerts : List[Alert], weathers : List[Weather])
+@(objects: List[(String, String, Int)], alerts : List[Alert], states : List[State])
 <!doctype html>
 
 <html lang="en">
@@ -17,7 +17,7 @@
               <!-- DataTales Example -->
           <div class="card shadow mb-4">
               <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold text-primary">Table de la Météo</h6>
+                  <h6 class="m-0 font-weight-bold text-primary">Table des sondes</h6>
               </div>
               <div class="card-body">
                   <div class="table-responsive">
@@ -26,34 +26,37 @@
                               <tr>
                                   <th>Id</th>
                                   <th>ObjectID</th>
-                                  <th>Sunshine</th>
+                                  <th>Charge percent</th>
                                   <th>Temperatue</th>
-                                  <th>Humidity</th>
-                                  <th>Wind</th>
+                                  <th>Placename</th>
+                                  <th>Latitude</th>
+                                  <th>Longitude</th>
                                   <th>TimeStamp</th>
                               </tr>
                           </thead>
                           <tfoot>
                               <tr>
-                                  <th>Id</th>
-                                  <th>ObjectID</th>
-                                  <th>Sunshine</th>
-                                  <th>Temperatue</th>
-                                  <th>Humidity</th>
-                                  <th>Wind</th>
-                                  <th>TimeStamp</th>
+                                <th>Id</th>
+                                <th>ObjectID</th>
+                                <th>Charge percent</th>
+                                <th>Temperatue</th>
+                                <th>Placename</th>
+                                <th>Latitude</th>
+                                <th>Longitude</th>
+                                <th>TimeStamp</th>
                               </tr>
                           </tfoot>
                           <tbody>
-                              @for(weather <- weathers) {
+                              @for(state <- states) {
                               <tr>
-                                  <td>@weather.id</td>
-                                  <td>@weather.objectID</td>
-                                  <td>@weather.sunshine</td>
-                                  <td>@weather.temperature</td>
-                                  <td>@weather.humidity</td>
-                                  <td>@weather.wind</td>
-                                  <td>@weather.timeStamp</td>
+                                  <td>@state.id</td>
+                                  <td>@state.objectID</td>
+                                  <td>@state.chargeperc</td>
+                                  <td>@state.temperature</td>
+                                  <td>@state.placename</td>
+                                  <td>@state.lat</td>
+                                  <td>@state.long</td>
+                                  <td>@state.timeStamp</td>
                               </tr>
                               }
                           </tbody>
@@ -61,6 +64,7 @@
                   </div>
               </div>
           </div>
+
       </div>
   }
 
