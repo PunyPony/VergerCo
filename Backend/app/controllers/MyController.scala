@@ -69,7 +69,7 @@ class MyController @Inject()(implicit ec: ExecutionContext,
     r
   }
 
-  def getInfo(url: String) = Action.async {
+  def requestGetInfo(url: String) = Action.async {
     implicit request => {
 
       val requestObj: WSRequest = ws.url(url)
@@ -81,48 +81,58 @@ class MyController @Inject()(implicit ec: ExecutionContext,
     }
   }
 
-  def getInfa(url: String) = {
+  def getInfo(url: String) = {
     val requestObj: WSRequest = ws.url(url)
     val futureResponse: Future[WSResponse] = requestObj.get()
     futureResponse
   }
 
   def getWeather() = {
-    getInfo("http://localhost:9001/v1/posts/weather")
+    requestGetInfo("http://localhost:9001/weather")
   }
 
   def getState() = {
-    getInfo("http://localhost:9001/v1/posts/state")
+    requestGetInfo("http://localhost:9001/state")
   }
 
   def getFruitQuality() = {
-    getInfo("http://localhost:9001/v1/posts/qualityFruit")
+    requestGetInfo("http://localhost:9001/qualityFruit")
   }
 
-  def getBoard() = {
+  def getObjects() =
+  {
     val dir = new File("conf")
     //val files = dir.list.map{x => Json.parse(Source.fromFile("csvjson/"+x).getLines.mkString)}
     val objects = (Json.parse(Source.fromFile("conf/objects.conf").getLines.mkString) \ "objects")
-                       .asOpt[List[JsValue]].get
-                       .map{x => ((x \ "name").asOpt[String].get, (x \ "ip").asOpt[String].get)}.toList
+      .asOpt[List[JsValue]].get
+      .map{x => ((x \ "name").asOpt[String].get, (x \ "ip").asOpt[String].get)}.toList
+    objects
+  }
+
+  def getAlerts() =
+  {
+    val alertsFuture = alertService.list()
+    val alerts = Await.result(alertsFuture, 1 seconds)
+    alerts.filter(alert => alert.timeStamp.get.after(new Date(System.currentTimeMillis() - 3600 * 1000)))
+  }
+
+  def getBoard() = {
     Action.async { implicit request =>
-      val alertsFuture = alertService.list()
-      val alerts = Await.result(alertsFuture, 1 seconds)
-      val r: Future[Result] = Future.successful(Ok(views.html.board(objects, alerts)))
+      val r: Future[Result] = Future.successful(Ok(views.html.board(getObjects, getAlerts)))
       r
     }
   }
 
   def getObjInfo(ip : String) = {
-    val weather = Await.result(getInfa(ip + "/weather"), 1 seconds).json
-    val state = Await.result(getInfa(ip + "/state"), 1 seconds).json
-    val quality = Await.result(getInfa(ip + "/quality"), 1 seconds).json
+    val weather = Await.result(getInfo(ip + "/weather"), 1 seconds).json
+    val state = Await.result(getInfo(ip + "/state"), 1 seconds).json
+    val quality = Await.result(getInfo(ip + "/quality"), 1 seconds).json
 
     val result = Redirect(ip + "/v1/posts/state");
   //  print(Helpers.contentAsString(Result result))
     Action.async {
       val r: Future[Result] = Future.successful(
-        Ok(views.html.info(ip, weather, state, quality)))
+        Ok(views.html.info(getObjects, getAlerts, ip, weather, state, quality)))
       r
     }
   }

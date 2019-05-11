@@ -2,18 +2,18 @@
 @import play.api.mvc._
 @import play.api.mvc.Results._
 @import models._
+
 @(objects: List[(String,String)], alerts : List[Alert])
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <title>Dashboard</title>
   </head>
-  @alerts
 
-  @main() {
+  @main(objects, alerts) {
   <body>
     <p>
-      Select the connected sensor that you want to see :
+      Select the connected object that you want to see :
     </p>
       
     <ul>

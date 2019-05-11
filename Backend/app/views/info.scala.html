@@ -1,5 +1,5 @@
 @import play.api.libs.json._
-@(ip : String, weather : JsValue, state : JsValue, quality : JsValue)
+@(objects: List[(String,String)], alerts : List[Alert], ip : String, weather : JsValue, state : JsValue, quality : JsValue)
 <!doctype html>
 
 
@@ -9,7 +9,7 @@
     <title>@("Sensor " + (state.head\ "objectID").asOpt[Int].get)</title>
   </head>
 
-  @main() {
+  @main(objects, alerts) {
 
     @if((state.head\ "chargeperc").asOpt[Float].get < 40) {
         <div class="alert alert-danger" role="alert">
@@ -39,7 +39,7 @@
 
      <ul style="list-style:none">
      <li>
-     <p class="text-primary"><strong>State of sensor :</strong></p>
+     <p class="text-primary"><strong>Sonde :</strong></p>
      <div class="col-md-8">
      <table class="table table-bordered">
         <thead class="thead">
@@ -66,7 +66,7 @@
     </div><li>
 
     <li> 
-    <p class="text-success"><strong>Weather :</strong></p>
+    <p class="text-success"><strong>Météo :</strong></p>
     <div class="col-md-6">
     <table class="table table-bordered">
         <thead  class="thead">
@@ -91,7 +91,7 @@
     <div></li>
 
     <li>
-    <p class="text-danger"><strong>Quality of fruit :</strong></p>
+    <p class="text-danger"><strong>Fruits :</strong></p>
     <div class="col-md-6">
     <table class="table table-bordered">
         <thead  class="thead">

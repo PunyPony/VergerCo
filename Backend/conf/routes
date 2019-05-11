@@ -1,6 +1,5 @@
-GET        /                       controllers.HomeController.index
-GET        /board                  controllers.MyController.getBoard
-GET        /board/info             controllers.MyController.getObjInfo(ip)
+GET        /                       controllers.MyController.getBoard
+GET        /info             controllers.MyController.getObjInfo(ip)
 
 ->         /                       controllers.Router
 
