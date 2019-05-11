@@ -18,7 +18,7 @@ case class State(id: Option[Long] = None,
                  placename: Option[String],
                  lat: Option[Float],
                  long: Option[Float],
-                 timeStamp: Option[Timestamp] = None)
+                 timeStamp: Option[Date] = None)
 
 object State {
   implicit def toParameters: ToParameterList[State] =
@@ -39,6 +39,22 @@ class StateRepository @Inject()(dbapi: DBApi)(implicit ec: DatabaseExecutionCont
 //      SQL"select * from STATE where id = $id".as(simple.singleOpt)
 //    }
 //  }(ec)
+
+  val StateParser: RowParser[State] = (
+    get[Option[Long]]("id") ~
+      get[Option[Int]]("objectID") ~
+      get[Option[Float]]("chargeperc") ~
+      get[Option[Float]]("temperature") ~
+      get[Option[String]]("placename") ~
+      get[Option[Float]]("lat") ~
+      get[Option[Float]]("long") ~
+      get[Option[Date]]("timeStamp")
+    ) map {
+    case id ~ objectID ~ chargeperc ~ temperature ~ placename ~ lat ~ long ~ timeStamp => // etc...
+    State(id, objectID, chargeperc, temperature, placename, lat, long, timeStamp) // etc...
+  }
+
+  val allRowsParser: ResultSetParser[List[State]] = StateParser.*
 
   /**
     * Insert a new state.
@@ -66,6 +82,27 @@ class StateRepository @Inject()(dbapi: DBApi)(implicit ec: DatabaseExecutionCont
     db.withConnection { implicit connection =>
       SQL"delete from STATE where id = ${id}".executeUpdate()
     }
+  }(ec)
+
+  def list(pageSize: Int = 10): Future[List[State]] = Future {
+
+    //val offest = pageSize * page
+
+    db.withConnection { implicit connection =>
+
+      val states = SQL(
+        """
+          select * from STATE
+          order by timestamp nulls last
+          limit {pageSize}
+        """
+      ).on(
+        'pageSize -> pageSize,
+      ).as(allRowsParser)
+      states
+
+    }
+
   }(ec)
 
 }

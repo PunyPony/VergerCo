@@ -15,7 +15,7 @@ case class FruitQuality(id: Option[Long] = None,
                         objectID: Option[Int],
                         mature: Option[Boolean],
                         sickness: Option[Boolean],
-                        timeStamp: Option[Timestamp] = None)
+                        timeStamp: Option[Date] = None)
 
 
 object FruitQuality {
@@ -37,6 +37,19 @@ class FruitQualityRepository @Inject()(dbapi: DBApi)(implicit ec: DatabaseExecut
 //    }
 //  }(ec)
 
+  val FruitQualityParser: RowParser[FruitQuality] = (
+    get[Option[Long]]("id") ~
+      get[Option[Int]]("objectID") ~
+      get[Option[Boolean]]("mature") ~
+      get[Option[Boolean]]("sickness")~
+      get[Option[Date]]("timeStamp")
+    ) map {
+    case id ~ objectID ~ mature ~ sickness ~ timeStamp => // etc...
+      FruitQuality(id, objectID, mature, sickness, timeStamp) // etc...
+  }
+
+  val allRowsParser: ResultSetParser[List[FruitQuality]] = FruitQualityParser.*
+
   /**
     * Insert a new fruitQuality.
     *
@@ -52,6 +65,27 @@ class FruitQualityRepository @Inject()(dbapi: DBApi)(implicit ec: DatabaseExecut
         )""").bind(fruitQuality).executeInsert()
       p
     }
+  }(ec)
+
+  def list(pageSize: Int = 10): Future[List[FruitQuality]] = Future {
+
+    //val offest = pageSize * page
+
+    db.withConnection { implicit connection =>
+
+      val fruitsQuality = SQL(
+        """
+          select * from FRUITQUALITY
+          order by timestamp nulls last
+          limit {pageSize}
+        """
+      ).on(
+        'pageSize -> pageSize,
+      ).as(allRowsParser)
+      fruitsQuality
+
+    }
+
   }(ec)
 
   /**

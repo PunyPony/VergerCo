@@ -16,7 +16,7 @@ case class Weather(id: Option[Long] = None,
                     temperature: Option[Float],
                     humidity: Option[Float],
                     wind: Option[Float],
-                    timeStamp: Option[Timestamp] = None)
+                    timeStamp: Option[Date] = None)
 object Weather {
   implicit def toParameters: ToParameterList[Weather] =
     Macro.toParameters[Weather]
@@ -35,6 +35,20 @@ class WeatherRepository @Inject()(dbapi: DBApi)(implicit ec: DatabaseExecutionCo
 //      SQL"select * from WEATHER where id = $id".as(simple.singleOpt)
 //    }
 //  }(ec)
+
+  val WeatherParser: RowParser[Weather] = (
+    get[Option[Long]]("id") ~
+      get[Option[Int]]("objectID") ~
+      get[Option[Boolean]]("sunshine") ~
+      get[Option[Float]]("temperature") ~
+      get[Option[Float]]("humidity") ~
+      get[Option[Float]]("wind") ~
+      get[Option[Date]]("timeStamp")
+    ) map {
+    case id ~ objectID ~ sunshine ~ temperature ~ humidity ~ wind ~ timeStamp => // etc...
+    Weather(id, objectID, sunshine, temperature, humidity, wind, timeStamp) // etc...
+  }
+  val allRowsParser: ResultSetParser[List[Weather]] = WeatherParser.*
 
   /**
     * Insert a new weather.
@@ -61,6 +75,28 @@ class WeatherRepository @Inject()(dbapi: DBApi)(implicit ec: DatabaseExecutionCo
     db.withConnection { implicit connection =>
       SQL"delete from WEATHER where id = ${id}".executeUpdate()
     }
+  }(ec)
+
+
+  def list(pageSize: Int = 10): Future[List[Weather]] = Future {
+
+    //val offest = pageSize * page
+
+    db.withConnection { implicit connection =>
+
+      val states = SQL(
+        """
+          select * from WEATHER
+          order by timestamp nulls last
+          limit {pageSize}
+        """
+      ).on(
+        'pageSize -> pageSize,
+      ).as(allRowsParser)
+      states
+
+    }
+
   }(ec)
 
 }
