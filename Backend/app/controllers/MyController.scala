@@ -120,7 +120,11 @@ class MyController @Inject()(implicit ec: ExecutionContext,
 
     val result = Redirect(ip + "/v1/posts/state");
   //  print(Helpers.contentAsString(Result result))
-    Action{Ok(views.html.info(ip, weather, state, quality))}
+    Action.async {
+      val r: Future[Result] = Future.successful(
+        Ok(views.html.info(ip, weather, state, quality)))
+      r
+    }
   }
 
   def processState = Action { request =>

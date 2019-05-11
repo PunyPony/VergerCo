@@ -18,7 +18,7 @@
       
     <ul>
           @for(obj <- objects) {
-            <li><a href=@("board/" + obj._2)>@obj._1</a></li>
+            <li><a href=@routes.MyController.getObjInfo(obj._2)>@obj._1</a></li>
           }
       <p></p>
     </ul>

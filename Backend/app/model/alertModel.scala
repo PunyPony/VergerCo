@@ -92,7 +92,7 @@ class AlertRepository @Inject()(dbapi: DBApi)(implicit ec: DatabaseExecutionCont
       val alerts = SQL(
         """
           select * from alert
-          order by timestamp last
+          order by timestamp nulls last
           limit {pageSize}
         """
       ).on(
