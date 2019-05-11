@@ -109,9 +109,8 @@ class MyController @Inject()(implicit ec: ExecutionContext,
     objects
   }
 
-  def getTableState() = {"lol"}
-  def getTableFruitQuality() = {"lol"}
-  def getTableAlert() = {"lol"}
+
+
 
   def getLastHourAlerts() : List[Alert] =
   {
@@ -123,12 +122,38 @@ class MyController @Inject()(implicit ec: ExecutionContext,
 
   def getTableWeather() = {
     Action.async { implicit request =>
-      val WeatherFuture = weatherService.list(100)
-      val weathers = Await.result(WeatherFuture, 1 seconds)
+      val weatherFuture = weatherService.list(100)
+      val weathers = Await.result(weatherFuture, 1 seconds)
       val r: Future[Result] = Future.successful(Ok(views.html.tableWeather(getObjects, getLastHourAlerts, weathers)))
       r
     }
   }
+
+  def getTableFruitQuality() = {
+    Action.async { implicit request =>
+      val fruitQualityFuture = fruitQualityService.list(100)
+      val fruitsQuality = Await.result(fruitQualityFuture, 1 seconds)
+      val r: Future[Result] = Future.successful(Ok(views.html.tableFruitQuality(getObjects, getLastHourAlerts, fruitsQuality)))
+      r
+    }
+  }
+
+  def getTableAlert() = {
+    Action.async { implicit request =>
+      val alertsFuture = alertService.list(100)
+      val alerts = Await.result(alertsFuture, 1 seconds)
+      val r: Future[Result] = Future.successful(Ok(views.html.tableAlert(getObjects, getLastHourAlerts, alerts)))
+      r
+    }
+  }
+
+  def getTableState() = {
+    Action.async { implicit request =>
+      val stateFuture = stateService.list(100)
+      val states = Await.result(stateFuture, 1 seconds)
+      val r: Future[Result] = Future.successful(Ok(views.html.tableState(getObjects, getLastHourAlerts, states)))
+      r
+  }}
 
   def getBoard() = {
     Action.async { implicit request =>
@@ -166,7 +191,6 @@ class MyController @Inject()(implicit ec: ExecutionContext,
       BadRequest("Expecting Json data")
     }
   }
-
 
   def processWeather = Action { request =>
     request.body.asJson.map { json =>

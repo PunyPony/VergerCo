@@ -1,7 +1,10 @@
-GET        /                       controllers.MyController.getBoard
-GET        /info             controllers.MyController.getObjInfo(ip)
-GET        /tableWeather     controllers.MyController.getTableWeather()
-->         /                       controllers.Router
+GET        /                    controllers.MyController.getBoard
+GET        /info                controllers.MyController.getObjInfo(ip)
+GET        /tableWeather        controllers.MyController.getTableWeather()
+GET        /tableState          controllers.MyController.getTableState()
+GET        /tableQuality        controllers.MyController.getTableFruitQuality()
+GET        /tableAlert          controllers.MyController.getTableAlert()
+->         /                    controllers.Router
 
 # Map static resources from the /public folder to the /assets URL path
 GET        /assets/*file        controllers.Assets.at(path="/public", file)
