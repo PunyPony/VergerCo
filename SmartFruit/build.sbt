@@ -18,6 +18,8 @@ libraryDependencies += "io.gatling" % "gatling-test-framework" % "3.0.1.1" % Tes
 libraryDependencies += ws
 libraryDependencies += ehcache
 
+libraryDependencies += "com.typesafe.akka" %% "akka-stream-kafka" % "1.0.4"
+
 // The Play project itself
 lazy val root = (project in file("."))
   .enablePlugins(Common, PlayScala, GatlingPlugin)
