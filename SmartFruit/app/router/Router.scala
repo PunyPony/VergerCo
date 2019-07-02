@@ -31,8 +31,8 @@ class Router @Inject()(controller: MyController) extends SimpleRouter {
       controller.pushState
     case GET(p"/pushQuality") =>
       controller.pushFruitQuality
-    case POST(p"/send/$topic") =>
-      controller.send(topic)
+//    case POST(p"/send/$topic") =>
+//      controller.send(topic)
 
   }
 

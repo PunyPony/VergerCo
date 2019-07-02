@@ -49,8 +49,9 @@ class MyController @Inject()(implicit ec: ExecutionContext, ws: WSClient,
     r
   }
 
-  def MetaPushInfo(url: String, sensor: JsValue) = Action.async {
+  def MetaPushInfo(url: String, sensor: JsValue, topic: String) = Action.async {
     implicit request => {
+      send(topic, sensor)
       val r: Future[Result] = PushInfo(url, sensor)
       r
     }
@@ -60,26 +61,26 @@ class MyController @Inject()(implicit ec: ExecutionContext, ws: WSClient,
     val jsonSensor = CSVReader.getWeather("csvjson/weather.csv")
     val url = confReader.getURL()
     checkWeatherAlert(jsonSensor)
-    MetaPushInfo(url+"processWeather", jsonSensor)
+    MetaPushInfo(url+"processWeather", jsonSensor, "weather")
   }
 
   def pushState() = {
     val jsonSensor = CSVReader.getState("csvjson/state.csv")
     val url = confReader.getURL()
     checkStateAlert(jsonSensor)
-    MetaPushInfo(url+"processState", jsonSensor)
+    MetaPushInfo(url+"processState", jsonSensor, "state")
   }
 
   def pushFruitQuality() = {
     val jsonSensor = CSVReader.getFruit("csvjson/quality.csv")
     val url = confReader.getURL()
     checkFruitQualityAlert(jsonSensor)
-    MetaPushInfo(url+"processQuality", jsonSensor)
+    MetaPushInfo(url+"processQuality", jsonSensor, "processQuality")
   }
 
   def pushFruitAlert(alert: JsValue) = {
     val url = confReader.getURL()
-    MetaPushInfo(url+"processAlert", alert)
+    MetaPushInfo(url+"processAlert", alert, "fruitAlert")
   }
 
   def getSensor(sensor: JsValue): Action[AnyContent] = Action.async {
@@ -137,13 +138,21 @@ class MyController @Inject()(implicit ec: ExecutionContext, ws: WSClient,
     getSensor(jsonSensor)
   }
 
-  def send(topic: String) = Action.async(parse.text) {
-    println("Message")
-
-    implicit request =>
-    kafkaService.sendMessage(topic, request.body).map {
+  def send(topic: String, json: JsValue) =  {
+    val message : String = Json.stringify(json)
+    kafkaService.sendMessage(topic, message).map {
       case _ => Ok
     }
+//    implicit request =>
+//    kafkaService.sendMessage(topic, request.body).map {
+//      case _ => Ok
+//    }
+
+//    implicit request =>
+//        kafkaService.sendMessage(topic, m).map {
+//          case _ => Ok
+//        }
+
   }
 }
 

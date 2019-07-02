@@ -13,12 +13,6 @@ import org.apache.spark.streaming.StreamingContext
 import org.apache.spark._
 import org.apache.spark.sql.catalyst.util.DateTimeUtils
 
-
-
-
-
-
-
 object Consummer {
   def main(args: Array[String]) {
     println("Salut")

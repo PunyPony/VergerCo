@@ -20,6 +20,7 @@ class Kafka @Inject()(
                      )(implicit materializer: Materializer) {
 
   def sendMessage(topic: String, message: String) = {
+    println(message)
     val producerSettings = ProducerSettings(system, new ByteArraySerializer, new StringSerializer)
       .withBootstrapServers(config.producerServer)
 
