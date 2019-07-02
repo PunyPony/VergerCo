@@ -18,7 +18,12 @@ import play.api.http.HttpEntity
 import akka.util.ByteString
 
 
-class MyController @Inject()(implicit ec: ExecutionContext, ws: WSClient, val controllerComponents: ControllerComponents) extends BaseController {
+
+import services.Kafka
+
+
+class MyController @Inject()(implicit ec: ExecutionContext, ws: WSClient,
+                             val kafkaService : Kafka, val controllerComponents: ControllerComponents) extends BaseController {
 
   case class Alert(objectID: Int, alertType: String)
   implicit val AlertWrites: Writes[Alert] = (
@@ -130,6 +135,15 @@ class MyController @Inject()(implicit ec: ExecutionContext, ws: WSClient, val co
   def getFruitQuality: Action[AnyContent] = {
     val jsonSensor = CSVReader.getFruit("csvjson/quality.csv")
     getSensor(jsonSensor)
+  }
+
+  def send(topic: String) = Action.async(parse.text) {
+    println("Message")
+
+    implicit request =>
+    kafkaService.sendMessage(topic, request.body).map {
+      case _ => Ok
+    }
   }
 }
 

@@ -17,7 +17,7 @@ libraryDependencies += "io.gatling.highcharts" % "gatling-charts-highcharts" % "
 libraryDependencies += "io.gatling" % "gatling-test-framework" % "3.0.1.1" % Test
 libraryDependencies += ws
 libraryDependencies += ehcache
-
+libraryDependencies += "com.typesafe.akka" %% "akka-slf4j" % "2.5.23"
 libraryDependencies += "com.typesafe.akka" %% "akka-stream-kafka" % "1.0.4"
 
 // The Play project itself
