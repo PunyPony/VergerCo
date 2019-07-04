@@ -48,17 +48,17 @@ object Consummer {
   )
 
   val topics = Array("state")
-//  val stream = KafkaUtils.createDirectStream[String, String](
-//    streamingContext,
-//    PreferConsistent,
-//    Subscribe[String, String](topics, kafkaParams)
-//
-  val preferredHosts = LocationStrategies.PreferConsistent
-  val offsets = Map(new TopicPartition("state", 0) -> 2L)
   val stream = KafkaUtils.createDirectStream[String, String](
     streamingContext,
-    preferredHosts,
-    ConsumerStrategies.Subscribe[String, String](topics, kafkaParams, offsets))
+    PreferConsistent,
+    Subscribe[String, String](topics, kafkaParams))
+
+//  val preferredHosts = LocationStrategies.PreferConsistent
+//  val offsets = Map(new TopicPartition("state", 0) -> 2L)
+//  val stream = KafkaUtils.createDirectStream[String, String](
+//    streamingContext,
+//    preferredHosts,
+//    ConsumerStrategies.Subscribe[String, String](topics, kafkaParams, offsets))
 
   stream.map(record => (record.key, record.value))
 }
