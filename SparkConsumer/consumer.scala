@@ -11,24 +11,26 @@ import org.apache.spark.sql.functions._
 import org.apache.spark.streaming._
 import org.apache.spark.streaming.StreamingContext
 import org.apache.spark._
-import org.apache.spark.sql.catalyst.util.DateTimeUtils
+import org.apache.spark.streaming.Time
+import org.apache.kafka.common.TopicPartition
+
 
 object Consummer {
   def main(args: Array[String]) {
     println("Salut")
-    //stream.foreachRDD{rdd => rdd.collect().foreach(println)}
-    import ss.implicits._
+    stream.foreachRDD { rdd =>
+      // Get the offset ranges in the RDD
+      val offsetRanges = rdd.asInstanceOf[HasOffsetRanges].offsetRanges
+      for (o <- offsetRanges) {
+        println(s"${o.topic} ${o.partition} offsets: ${o.fromOffset} to ${o.untilOffset}")
+      }
+    }
 
-    val df = ss
-      .readStream
-      .format("kafka")
-      .option("kafka.bootstrap.servers", "localhost:9092")
-      .option("subscribe", "topic1")
-      .load()
-    df.selectExpr("CAST(key AS STRING)", "CAST(value AS STRING)")
-      .as[(String, String)]
+    streamingContext.start
 
-    df.show()
+      // the above code is printing out topic details every 5 seconds
+      // until you stop it.
+    //ssc.stop(stopSparkContext = false)
 
   }
 
@@ -45,12 +47,19 @@ object Consummer {
     "enable.auto.commit" -> (false: java.lang.Boolean)
   )
 
-  val topics = Array("test1", "topicB")
+  val topics = Array("state")
+//  val stream = KafkaUtils.createDirectStream[String, String](
+//    streamingContext,
+//    PreferConsistent,
+//    Subscribe[String, String](topics, kafkaParams)
+//
+  val preferredHosts = LocationStrategies.PreferConsistent
+  val offsets = Map(new TopicPartition("state", 0) -> 2L)
   val stream = KafkaUtils.createDirectStream[String, String](
     streamingContext,
-    PreferConsistent,
-    Subscribe[String, String](topics, kafkaParams)
-  )
+    preferredHosts,
+    ConsumerStrategies.Subscribe[String, String](topics, kafkaParams, offsets))
+
   stream.map(record => (record.key, record.value))
 }
 
