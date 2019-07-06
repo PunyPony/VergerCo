@@ -11,7 +11,8 @@ import akka.kafka.scaladsl._
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.serialization._
-
+//import org.apache.kafka.connect.json.JsonSerializer
+//import com.fasterxml.jackson.databind.{ ObjectMapper, JsonNode }
 
 @Singleton
 class Kafka @Inject()(

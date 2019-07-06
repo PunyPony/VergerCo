@@ -1,3 +1,5 @@
+package consumer
+
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.spark.streaming.kafka010._
 import org.apache.spark.streaming.kafka010.LocationStrategies.PreferConsistent
@@ -11,32 +13,43 @@ import org.apache.spark.sql.functions._
 import org.apache.spark.streaming._
 import org.apache.spark.streaming.StreamingContext
 import org.apache.spark._
-import org.apache.spark.streaming.Time
-import org.apache.kafka.common.TopicPartition
+//import kafkastream._
+//import org.apache.spark.streaming.Time
+//import org.apache.kafka.common.TopicPartition
 
 
-object Consummer {
-  def main(args: Array[String]) {
-    println("Salut")
+object Consumer {
+  def main(args: Array[String]) = {
+    stream.saveAsTextFiles("/tmp/GUDULE")
     stream.foreachRDD { rdd =>
       // Get the offset ranges in the RDD
+      rdd.foreach { record =>
+        val value : String = record.value()
+        println(value)
+      }
+
       val offsetRanges = rdd.asInstanceOf[HasOffsetRanges].offsetRanges
       for (o <- offsetRanges) {
         println(s"${o.topic} ${o.partition} offsets: ${o.fromOffset} to ${o.untilOffset}")
+
       }
     }
 
+
     streamingContext.start
+
+    while (true){}
 
       // the above code is printing out topic details every 5 seconds
       // until you stop it.
-    //ssc.stop(stopSparkContext = false)
+    streamingContext.stop(stopSparkContext = false)
+    sc.stop
 
   }
 
   val ss = SparkSession.builder().master("local[*]").appName("KafkaSparkConsummer").getOrCreate()
   val sc = ss.sparkContext
-  val streamingContext = new StreamingContext(sc, Seconds(2))
+  val streamingContext = new StreamingContext(sc, Seconds(10))
 
   val kafkaParams = Map[String, Object](
     "bootstrap.servers" -> "localhost:9092",

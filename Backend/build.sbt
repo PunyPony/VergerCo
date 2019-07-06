@@ -22,6 +22,14 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-http-testkit" % "10.1.8" % Test
 )
 
+libraryDependencies += "org.apache.spark" % "spark-streaming-kafka-0-10_2.12" % "2.4.3"
+libraryDependencies += "org.apache.spark" %% "spark-core" % "2.4.3"
+libraryDependencies += "org.apache.spark" %% "spark-streaming" % "2.4.3"
+libraryDependencies +=  "org.apache.spark" %% "spark-sql" % "2.4.3"
+libraryDependencies +=  "org.apache.spark" %% "spark-sql-kafka-0-10" % "2.4.3"
+//libraryDependencies += "com.typesafe.akka" %% "akka-slf4j" % "2.5.23"
+//libraryDependencies += "com.typesafe.akka" %% "akka-stream-kafka" % "1.0.4"
+
 libraryDependencies += ws
 libraryDependencies += ehcache
 libraryDependencies += jdbc
