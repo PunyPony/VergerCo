@@ -33,6 +33,7 @@ import scala.language.postfixOps
 import play.api.test._
 //import play.api.test.Helpers._
 
+
 case class ObjAlert(name : String, url : String)
 
 class MyController @Inject()(implicit ec: ExecutionContext,
@@ -161,6 +162,12 @@ class MyController @Inject()(implicit ec: ExecutionContext,
       r
     }
   }
+
+  def getMetrics() = {
+    Action.async { implicit request =>
+      val r: Future[Result] = Future.successful(Ok(views.html.metrics(getObjects, getLastHourAlerts, List(40))))
+      r
+  }}
 
   def getObjInfo(ip : String) = {
     val weather = Await.result(getInfo(ip + "/weather"), 1 seconds).json

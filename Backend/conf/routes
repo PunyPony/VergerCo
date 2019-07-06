@@ -4,6 +4,7 @@ GET        /tableWeather        controllers.MyController.getTableWeather()
 GET        /tableState          controllers.MyController.getTableState()
 GET        /tableQuality        controllers.MyController.getTableFruitQuality()
 GET        /tableAlert          controllers.MyController.getTableAlert()
+GET        /metrics             controllers.MyController.getMetrics()
 ->         /                    controllers.Router
 
 # Map static resources from the /public folder to the /assets URL path
