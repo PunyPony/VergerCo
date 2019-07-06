@@ -20,7 +20,7 @@ import org.apache.spark._
 
 object Consumer {
   def main(args: Array[String]) = {
-    stream.saveAsTextFiles("/tmp/GUDULE")
+    stream.saveAsTextFiles("/tmp/data-spark/", "parquet")
     stream.foreachRDD { rdd =>
       // Get the offset ranges in the RDD
       rdd.foreach { record =>
@@ -60,7 +60,7 @@ object Consumer {
     "enable.auto.commit" -> (false: java.lang.Boolean)
   )
 
-  val topics = Array("state")
+  val topics = Array("state", "weather")
   val stream = KafkaUtils.createDirectStream[String, String](
     streamingContext,
     PreferConsistent,
