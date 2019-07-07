@@ -10,7 +10,7 @@ import org.apache.spark.sql._
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 import play.api.libs.json._
-import org.apache.spark.streaming.Time
+import play.api._
 
 
 
@@ -21,7 +21,7 @@ object SparkReader {
         df.filter("sickness == True").show()
     }
 
-    val ss = SparkSession.builder().master("spark://localhost:9003").appName("Reader").getOrCreate()
+    val ss = SparkSession.builder().master("local[*]").appName("Reader").getOrCreate()
     val sc = ss.sparkContext
 
 }
