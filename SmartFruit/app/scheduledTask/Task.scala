@@ -19,20 +19,15 @@ class CodeBlockTask @Inject() (actorSystem: ActorSystem)(implicit executionConte
 
   actorSystem.scheduler.schedule(initialDelay = 0.seconds, interval = 3600.seconds) {
     println("Push Fruit Quality...")
-    val jsonSensor = CSVReader.getFruit("csvjson/quality.csv")
-    val url = confReader.getURL()
-    val response = controller.PushInfo(url+"processQuality", jsonSensor)
+    controller.pushFruitQuality
   }
   actorSystem.scheduler.schedule(initialDelay = 0.seconds, interval = 300.seconds) {
     println("Push Weather...")
-    val jsonSensor = CSVReader.getWeather("csvjson/weather.csv")
-    val url = confReader.getURL()
-    val response = controller.PushInfo(url+"processWeather", jsonSensor)
+    controller.pushWeather
+
   }
   actorSystem.scheduler.schedule(initialDelay = 0.seconds, interval = 300.seconds) {
     println("Push State...")
-    val jsonSensor = CSVReader.getState("csvjson/state.csv")
-    val url = confReader.getURL()
-    val response = controller.PushInfo(url+"processState", jsonSensor)
+    controller.pushState
   }
 }

@@ -31,6 +31,7 @@ import play.api.libs.ws._
 import models._
 import scala.language.postfixOps
 import play.api.test._
+import sparkreader._
 //import play.api.test.Helpers._
 
 
@@ -111,8 +112,6 @@ class MyController @Inject()(implicit ec: ExecutionContext,
   }
 
 
-
-
   def getLastHourAlerts() : List[Alert] =
   {
     val alertsFuture = alertService.list(5)
@@ -165,6 +164,7 @@ class MyController @Inject()(implicit ec: ExecutionContext,
 
   def getMetrics() = {
     Action.async { implicit request =>
+      val sick = SparkReader.VergerSick()
       val r: Future[Result] = Future.successful(Ok(views.html.metrics(getObjects, getLastHourAlerts, List(40))))
       r
   }}

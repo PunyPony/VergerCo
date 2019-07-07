@@ -41,7 +41,8 @@ class MyController @Inject()(implicit ec: ExecutionContext, ws: WSClient,
     Result(ResponseHeader(response.status, headers), entity)
   }
 
-  def PushInfo(url: String, sensor: JsValue) = {
+  def PushInfo(url: String, sensor: JsValue, topic : String) = {
+    send(topic, sensor)
     val futureResponse: Future[WSResponse] = ws.url(url).post(sensor)
     val r: Future[Result] = futureResponse.flatMap(responseObj => Future {
       responseToResult(responseObj)
@@ -51,8 +52,7 @@ class MyController @Inject()(implicit ec: ExecutionContext, ws: WSClient,
 
   def MetaPushInfo(url: String, sensor: JsValue, topic: String) = Action.async {
     implicit request => {
-      send(topic, sensor)
-      val r: Future[Result] = PushInfo(url, sensor)
+      val r: Future[Result] = PushInfo(url, sensor, topic)
       r
     }
   }
@@ -75,12 +75,12 @@ class MyController @Inject()(implicit ec: ExecutionContext, ws: WSClient,
     val jsonSensor = CSVReader.getFruit("csvjson/quality.csv")
     val url = confReader.getURL()
     checkFruitQualityAlert(jsonSensor)
-    MetaPushInfo(url+"processQuality", jsonSensor, "processQuality")
+    MetaPushInfo(url+"processQuality", jsonSensor, "quality")
   }
 
   def pushFruitAlert(alert: JsValue) = {
     val url = confReader.getURL()
-    MetaPushInfo(url+"processAlert", alert, "fruitAlert")
+    MetaPushInfo(url+"processAlert", alert, "alert")
   }
 
   def getSensor(sensor: JsValue): Action[AnyContent] = Action.async {
@@ -96,9 +96,9 @@ class MyController @Inject()(implicit ec: ExecutionContext, ws: WSClient,
     val url = confReader.getURL()
     val id = confReader.getObjID()
     if (charge <= 15)
-      PushInfo(url+"processAlert", Json.toJson(new Alert(id, "Sys : Critical battery low")))
+      PushInfo(url+"processAlert", Json.toJson(new Alert(id, "Sys : Critical battery low")), "alert")
     if (temperature >= 70)
-      PushInfo(url+"processAlert", Json.toJson(new Alert(id, "Sys : High critical temperature")))
+      PushInfo(url+"processAlert", Json.toJson(new Alert(id, "Sys : High critical temperature")), "alert")
   }
 
   def checkWeatherAlert(weather: JsValue): Unit = {
@@ -107,9 +107,9 @@ class MyController @Inject()(implicit ec: ExecutionContext, ws: WSClient,
     val url = confReader.getURL()
     val id = confReader.getObjID()
     if (wind >= 40)
-      PushInfo(url+"processAlert", Json.toJson(new Alert(id, "Warning : High wind speed")))
+      PushInfo(url+"processAlert", Json.toJson(new Alert(id, "Warning : High wind speed")), "alert")
     if (temperature >= 28)
-      PushInfo(url+"processAlert", Json.toJson(new Alert(id, "Warning : High temperature")))
+      PushInfo(url+"processAlert", Json.toJson(new Alert(id, "Warning : High temperature")), "alert")
   }
 
   def checkFruitQualityAlert(fruitQuality: JsValue): Unit = {
@@ -118,9 +118,9 @@ class MyController @Inject()(implicit ec: ExecutionContext, ws: WSClient,
     val url = confReader.getURL()
     val id = confReader.getObjID()
     if (mature)
-      PushInfo(url+"processAlert", Json.toJson(new Alert(id, "Your fruits are mature !")))
+      PushInfo(url+"processAlert", Json.toJson(new Alert(id, "Your fruits are mature !")),"alert")
     if (sickness)
-      PushInfo(url+"processAlert", Json.toJson(new Alert(id, "Warning : Your fruits seems to be sick.")))
+      PushInfo(url+"processAlert", Json.toJson(new Alert(id, "Warning : Your fruits seems to be sick.")),"alert")
   }
 
   def getState: Action[AnyContent] = {
@@ -139,19 +139,28 @@ class MyController @Inject()(implicit ec: ExecutionContext, ws: WSClient,
   }
 
   def send(topic: String, json: JsValue) =  {
-    val message : String = Json.stringify(json)
-    kafkaService.sendMessage(topic, message).map {
-      case _ => Ok
+    topic match
+    {
+      case "alert" => {
+        kafkaService.sendMessage(topic, Json.stringify(json)).map {
+          case _ => Ok
+        }
+      }
+      case _ => {
+        kafkaService.sendMessage(topic, Json.stringify(json(0))).map {
+          case _ => Ok
+        }
+      }
     }
+//
+//    println("message : " +message)
+//    kafkaService.sendMessage(topic, message).map {
+//      case _ => Ok
+//    }
 //    implicit request =>
 //    kafkaService.sendMessage(topic, request.body).map {
 //      case _ => Ok
 //    }
-
-//    implicit request =>
-//        kafkaService.sendMessage(topic, m).map {
-//          case _ => Ok
-//        }
 
   }
 }

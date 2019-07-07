@@ -27,8 +27,12 @@ libraryDependencies += "org.apache.spark" %% "spark-core" % "2.4.3"
 libraryDependencies += "org.apache.spark" %% "spark-streaming" % "2.4.3"
 libraryDependencies +=  "org.apache.spark" %% "spark-sql" % "2.4.3"
 libraryDependencies +=  "org.apache.spark" %% "spark-sql-kafka-0-10" % "2.4.3"
-//libraryDependencies += "com.typesafe.akka" %% "akka-slf4j" % "2.5.23"
-//libraryDependencies += "com.typesafe.akka" %% "akka-stream-kafka" % "1.0.4"
+libraryDependencies += "com.typesafe.akka" %% "akka-slf4j" % "2.5.23"
+libraryDependencies += "com.typesafe.akka" %% "akka-stream-kafka" % "1.0.4"
+libraryDependencies += "com.fasterxml.jackson.core" % "jackson-databind" % "2.9.9"
+libraryDependencies += "com.fasterxml.jackson.core" % "jackson-core" % "2.8.7"
+libraryDependencies +=  "com.fasterxml.jackson.core" % "jackson-annotations" % "2.8.7"
+libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.8.7"
 
 libraryDependencies += ws
 libraryDependencies += ehcache
