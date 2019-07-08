@@ -164,7 +164,8 @@ class MyController @Inject()(implicit ec: ExecutionContext,
 
   def getMetrics() = {
     Action.async { implicit request =>
-      val sick = SparkReader.VergerSick()
+//      val sick = SparkReader.vergerSick()
+//      val abat = SparkReader.low()
       val r: Future[Result] = Future.successful(Ok(views.html.metrics(getObjects, getLastHourAlerts, List(40))))
       r
   }}

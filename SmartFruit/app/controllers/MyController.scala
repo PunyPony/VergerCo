@@ -58,21 +58,21 @@ class MyController @Inject()(implicit ec: ExecutionContext, ws: WSClient,
   }
 
   def pushWeather() = {
-    val jsonSensor = CSVReader.getWeather("csvjson/weather.csv")
+    val jsonSensor = CSVReader.getWeather()
     val url = confReader.getURL()
     checkWeatherAlert(jsonSensor)
     MetaPushInfo(url+"processWeather", jsonSensor, "weather")
   }
 
   def pushState() = {
-    val jsonSensor = CSVReader.getState("csvjson/state.csv")
+    val jsonSensor = CSVReader.getState()
     val url = confReader.getURL()
     checkStateAlert(jsonSensor)
     MetaPushInfo(url+"processState", jsonSensor, "state")
   }
 
   def pushFruitQuality() = {
-    val jsonSensor = CSVReader.getFruit("csvjson/quality.csv")
+    val jsonSensor = CSVReader.getFruit()
     val url = confReader.getURL()
     checkFruitQualityAlert(jsonSensor)
     MetaPushInfo(url+"processQuality", jsonSensor, "quality")
@@ -124,17 +124,17 @@ class MyController @Inject()(implicit ec: ExecutionContext, ws: WSClient,
   }
 
   def getState: Action[AnyContent] = {
-    val jsonSensor = CSVReader.getState("csvjson/state.csv")
+    val jsonSensor = CSVReader.getState()
     getSensor(jsonSensor)
   }
 
   def getWeather: Action[AnyContent] = {
-    val jsonSensor = CSVReader.getWeather("csvjson/weather.csv")
+    val jsonSensor = CSVReader.getWeather()
     getSensor(jsonSensor)
   }
 
   def getFruitQuality: Action[AnyContent] = {
-    val jsonSensor = CSVReader.getFruit("csvjson/quality.csv")
+    val jsonSensor = CSVReader.getFruit()
     getSensor(jsonSensor)
   }
 

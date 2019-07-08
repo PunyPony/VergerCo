@@ -75,7 +75,16 @@ object CSVReader {
     return file
   }
 
-  def getState(sensor: String): JsValue = {
+  def random(): Int =
+  {
+    val start = 0
+    val end   = 2
+    val rnd = new scala.util.Random
+    start + rnd.nextInt( (end - start) + 1 )
+  }
+
+  def getState(): JsValue = {
+    val sensor = "csvjson/state"+random()+".csv"
     val file = checkFile(sensor)
     val content: Iterator[Array[String]] = Source.fromFile(sensor).getLines.map(_.split(",")).drop(1)
     val id = confReader.getObjID()
@@ -83,7 +92,8 @@ object CSVReader {
     Json.toJson(caseClass)
   }
 
-  def getWeather(sensor: String): JsValue = {
+  def getWeather(): JsValue = {
+    val sensor = "csvjson/weather"+random()+".csv"
     val file = checkFile(sensor)
     val id = confReader.getObjID()
     val content: Iterator[Array[String]] = Source.fromFile(sensor).getLines.map(_.split(",")).drop(1)
@@ -91,7 +101,8 @@ object CSVReader {
     Json.toJson(caseClass)
   }
 
-  def getFruit(sensor: String): JsValue = {
+  def getFruit(): JsValue = {
+    val sensor = "csvjson/quality"+random()+".csv"
     val file = checkFile(sensor)
     val id = confReader.getObjID()
     val content: Iterator[Array[String]] = Source.fromFile(sensor).getLines.map(_.split(",")).drop(1)
