@@ -17,17 +17,23 @@ import play.api.libs.functional.syntax._
 
 class CodeBlockTask @Inject() (actorSystem: ActorSystem)(implicit executionContext: ExecutionContext, controller: MyController) {
 
-  actorSystem.scheduler.schedule(initialDelay = 0.seconds, interval = 3600.seconds) {
+  actorSystem.scheduler.schedule(initialDelay = 0.seconds, interval = 5.seconds) {
     println("Push Fruit Quality...")
-    controller.pushFruitQuality
+    val jsonSensor = CSVReader.getFruit()
+    val url = confReader.getURL()
+    val response = controller.PushInfo(url+"processQuality", jsonSensor, "quality")
   }
-  actorSystem.scheduler.schedule(initialDelay = 0.seconds, interval = 300.seconds) {
+  actorSystem.scheduler.schedule(initialDelay = 0.seconds, interval = 2.seconds) {
     println("Push Weather...")
-    controller.pushWeather
+    val jsonSensor = CSVReader.getWeather()
+    val url = confReader.getURL()
+    val response = controller.PushInfo(url+"processWeather", jsonSensor, "weather")
 
   }
-  actorSystem.scheduler.schedule(initialDelay = 0.seconds, interval = 300.seconds) {
+  actorSystem.scheduler.schedule(initialDelay = 0.seconds, interval = 2.seconds) {
     println("Push State...")
-    controller.pushState
+    val jsonSensor = CSVReader.getState()
+    val url = confReader.getURL()
+    val response = controller.PushInfo(url+"processState", jsonSensor, "state")
   }
 }
